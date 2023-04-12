@@ -1,0 +1,23 @@
+{
+  "name": "megapaca",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ingridper/Megapaca.git"
+  },
+  "author": "Ingrid Pérez Mena",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ingridper/Megapaca/issues"
+  },
+  "homepage": "https://github.com/ingridper/Megapaca#readme",
+  "dependencies": {
+    "telebot": "^1.4.1"
+  }
+}
