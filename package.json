@@ -9,15 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ingridper/Megapaca.git"
+    "url": "git+https://github.com/grinita/Megapaca.git"
   },
   "author": "Ingrid Pérez Mena",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ingridper/Megapaca/issues"
+    "url": "https://github.com/grinita/Megapaca/issues"
   },
-  "homepage": "https://github.com/ingridper/Megapaca#readme",
+  "homepage": "https://github.com/grinita/Megapaca#readme",
   "dependencies": {
-    "telebot": "^1.4.1"
+    "telegraf": "^4.12.2"
   }
 }
