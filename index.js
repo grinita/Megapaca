@@ -1,7 +1,8 @@
 
 const { Telegraf } = require("telegraf");
 
-const TOKEN = '5998885384:AAGYq3No7pLU8IFweDu63tdqyz_LVfaicCs';
+const TOKEN = '';
+
 
 const bot = new Telegraf(TOKEN)
 
