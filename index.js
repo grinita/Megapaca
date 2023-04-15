@@ -1,11 +1,14 @@
 
 const { Telegraf } = require("telegraf");
-var con = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "change-me",
-  database: "megapaca"
-});
+
+var mysql = require('mysql2');
+
+mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "change-me",
+    database: "megapaca"
+  });
 
 const TOKEN = con.connect(function (err) {
     if (err) throw err;
