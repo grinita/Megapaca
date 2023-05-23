@@ -4,7 +4,7 @@ const mysql = require('mysql2');
 
 async function obtenerToken() {
   const connection = mysql.createConnection({
-    host: "localhost",
+    host: "d8f406ed5c65",
     user: "root",
     password: "change-me",
     database: "megapaca"
