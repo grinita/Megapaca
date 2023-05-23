@@ -19,7 +19,7 @@ const TOKEN = con.connect(function (err) {
     });
 });;
 */
-async function obtenerToken() {
+async function getToken() {
   try {
     const results = await new Promise((resolve, reject) => {
       con.query('SELECT * FROM constantes', (error, results) => {
@@ -39,6 +39,13 @@ async function obtenerToken() {
   }
 }
 
+function obtenerToken() {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(getToken());
+    }, 2000); // Simulamos un retardo de 2 segundos antes de resolver la promesa
+  });
+}
 
 const TOKEN = obtenerToken().then((result) => {
     const token = result[0].token;
