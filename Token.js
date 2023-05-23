@@ -2,40 +2,33 @@
 
 const mysql = require('mysql2');
 
-const connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "change-me",
-  database: "megapaca"
-});
+async function obtenerToken() {
+  const connection = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "change-me",
+    database: "megapaca"
+  });
 
-let TOKEN; // Variable global para almacenar el resultado de la consulta
-
-function obtenerToken() {
   return new Promise((resolve, reject) => {
-    connection.query('SELECT * FROM constantes', (error, results) => {
-      if (error) {
-        reject(error);
-      } else {
-        TOKEN = results[0]["token"];
-        console.log("Se esta guardando: "+TOKEN);
-        resolve();
+    connection.connect((err) => {
+      if (err) {
+        reject(err);
+        return;
       }
+
+      connection.query('SELECT * FROM constantes', (error, results) => {
+        if (error) {
+          reject(error);
+        } else {
+          connection.end(); // Cerrar la conexión después de obtener los resultados
+          resolve(results[0]["token"]);
+        }
+      });
     });
   });
 }
 
-async function obtenerYGuardarToken() {
-  try {
-    await obtenerToken();
-  } catch (error) {
-    console.error(error);
-  } finally {
-    connection.end();
-  }
-}
-
 module.exports = {
-  obtenerYGuardarToken,
-  obtenerToken // Exportar la función obtenerToken
+  obtenerToken
 };
