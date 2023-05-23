@@ -60,7 +60,7 @@ async function obtenerYGuardarToken() {
   }
 }
 
-obtenerYGuardarToken();
+await obtenerYGuardarToken();
 
 console.log("El Token: " + TOKEN);
 /*
