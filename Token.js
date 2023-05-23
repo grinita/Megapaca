@@ -17,7 +17,8 @@ async function obtenerToken() {
       if (error) {
         reject(error);
       } else {
-        resolve(results);
+        TOKEN = results; // Asignar el valor de results a TOKEN
+        resolve(); // Resolver la promesa sin devolver ningún valor
       }
     });
   });
@@ -25,8 +26,7 @@ async function obtenerToken() {
 
 async function obtenerYGuardarToken() {
   try {
-    const result = await obtenerToken();
-    TOKEN = result;
+    await obtenerToken(); // Esperar a que se complete la consulta
   } catch (error) {
     console.error(error);
   } finally {
