@@ -1,8 +1,6 @@
 
 const { Telegraf } = require("telegraf");
-
-
-const { obtenerYGuardarToken } = require('./Token');
+const { obtenerYGuardarToken, TOKEN } = require('./Token');
 
 async function obtenerToken() {
   return new Promise((resolve, reject) => {
@@ -17,15 +15,15 @@ async function obtenerToken() {
 }
 
 (async () => {
-  var token;
   try {
-    token = await obtenerToken();
+    const token = await obtenerToken();
     console.log("La variable token es:", token);
   } catch (error) {
     console.error("Error al obtener el token:", error);
   }
+
     
-   const bot = new Telegraf(TOKEN)
+   const bot = new Telegraf(token)
 
 
 bot.command('test', ctx => {
