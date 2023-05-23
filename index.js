@@ -3,7 +3,7 @@ const { Telegraf } = require("telegraf");
 
 var mysql = require('mysql2');
 
-mysql.createConnection({
+var con = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "change-me",
