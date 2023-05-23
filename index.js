@@ -1,68 +1,13 @@
 
 const { Telegraf } = require("telegraf");
 
-var mysql = require('mysql2');
+const { TOKEN } = require('./Token');
 
-var con = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "change-me",
-    database: "megapaca"
-  });
-/*
-const TOKEN = con.connect(function (err) {
-    if (err) throw err;
-    con.query("SELECT * FROM constantes", function (err, result, fields) {
-        if (err) throw err;
-        console.log(result[0]["token"]);
-        return result[0]["token"];
-    });
-});;
-*/
-async function getToken() {
-  try {
-    const results = await new Promise((resolve, reject) => {
-      con.query('SELECT * FROM constantes', (error, results) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(results);
-        }
-      });
-    });
+var token = TOKEN;
 
-    // Manejar los resultados de la consulta
-    console.log(results);
-  } catch (error) {
-    // Manejar el error de la consulta
-    console.error(error);
-  }
-}
+console.log("La variable token es:", token);
 
-let TOKEN; // Declarar una variable global para almacenar el token
 
-async function obtenerToken() {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(getToken());
-    }, 2000);
-  });
-}
-
-async function obtenerYGuardarToken() {
-  try {
-    const result = await obtenerToken();
-    TOKEN = result[0].token;
-    console.log(TOKEN); // Imprimirá '5948828258:AAEt_LpxxEmMkFXjvTIqo1Iq3PIfGkSZARI'
-    // Puedes realizar otras operaciones con el TOKEN aquí
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-await obtenerYGuardarToken();
-
-console.log("El Token: " + TOKEN);
 /*
 const bot = new Telegraf(TOKEN)
 
