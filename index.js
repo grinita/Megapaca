@@ -40,8 +40,8 @@ async function obtenerToken() {
 }
 
 
-const TOKEN = obtenerToken()[0];
-console.log(TOKEN);
+const TOKEN = obtenerToken();
+console.log("El Token: " + TOKEN);
 /*
 const bot = new Telegraf(TOKEN)
 
