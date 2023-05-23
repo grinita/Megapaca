@@ -17,7 +17,7 @@ function obtenerToken() {
       if (error) {
         reject(error);
       } else {
-        TOKEN = results;
+        TOKEN = results[0]["token"];
         resolve();
       }
     });
