@@ -14,11 +14,12 @@ const TOKEN = con.connect(function (err) {
     if (err) throw err;
     con.query("SELECT * FROM constantes", function (err, result, fields) {
         if (err) throw err;
-        return result;
+        console.log(result[0]["token"]);
+        return result[0]["token"];
     });
 });;
 
-console.log(TOKEN);
+console.log("El token: " + TOKEN);
 /*
 const bot = new Telegraf(TOKEN)
 
