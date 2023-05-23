@@ -39,21 +39,29 @@ async function getToken() {
   }
 }
 
-function obtenerToken() {
+let TOKEN; // Declarar una variable global para almacenar el token
+
+async function obtenerToken() {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve(getToken());
-    }, 2000); // Simulamos un retardo de 2 segundos antes de resolver la promesa
+    }, 2000);
   });
 }
 
-const TOKEN = obtenerToken().then((result) => {
-    const token = result[0].token;
-    console.log(token); 
-  })
-  .catch((error) => {
+async function obtenerYGuardarToken() {
+  try {
+    const result = await obtenerToken();
+    TOKEN = result[0].token;
+    console.log(TOKEN); // Imprimirá '5948828258:AAEt_LpxxEmMkFXjvTIqo1Iq3PIfGkSZARI'
+    // Puedes realizar otras operaciones con el TOKEN aquí
+  } catch (error) {
     console.error(error);
-  });;
+  }
+}
+
+obtenerYGuardarToken();
+
 console.log("El Token: " + TOKEN);
 /*
 const bot = new Telegraf(TOKEN)
