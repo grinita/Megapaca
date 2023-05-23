@@ -34,10 +34,6 @@ async function obtenerYGuardarToken() {
   }
 }
 
-async function imprimirToken() {
-  await obtenerYGuardarToken();
-  console.log("Este es el token:", TOKEN); // Imprimirá "Este es el token:" seguido de los resultados de la consulta
-  // Puedes realizar otras operaciones con el TOKEN aquí
-}
-
-imprimirToken();
+module.exports = {
+  obtenerYGuardarToken
+};
