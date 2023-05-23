@@ -18,6 +18,7 @@ function obtenerToken() {
         reject(error);
       } else {
         TOKEN = results[0]["token"];
+        console.log("Se esta guardando: "+TOKEN);
         resolve();
       }
     });
