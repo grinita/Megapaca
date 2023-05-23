@@ -14,7 +14,7 @@ const TOKEN = con.connect(function (err) {
     if (err) throw err;
     con.query("SELECT * FROM constantes", function (err, result, fields) {
         if (err) throw err;
-        return result[0]["token"];
+        return result;
     });
 });;
 
