@@ -15,8 +15,9 @@ async function obtenerToken() {
 }
 
 (async () => {
+  var token;
   try {
-    const token = await obtenerToken();
+    token = await obtenerToken();
     console.log("La variable token es:", token);
   } catch (error) {
     console.error("Error al obtener el token:", error);
