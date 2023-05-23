@@ -35,5 +35,6 @@ async function obtenerYGuardarToken() {
 }
 
 module.exports = {
-  obtenerYGuardarToken
+  obtenerYGuardarToken,
+  TOKEN // Exportar la variable TOKEN
 };
