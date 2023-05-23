@@ -9,7 +9,7 @@ var con = mysql.createConnection({
     password: "change-me",
     database: "megapaca"
   });
-
+/*
 const TOKEN = con.connect(function (err) {
     if (err) throw err;
     con.query("SELECT * FROM constantes", function (err, result, fields) {
@@ -18,8 +18,29 @@ const TOKEN = con.connect(function (err) {
         return result[0]["token"];
     });
 });;
+*/
+async function obtenerToken() {
+  try {
+    const results = await new Promise((resolve, reject) => {
+      con.query('SELECT * FROM constantes', (error, results) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(results);
+        }
+      });
+    });
 
-console.log("El token: " + TOKEN);
+    // Manejar los resultados de la consulta
+    console.log(results);
+  } catch (error) {
+    // Manejar el error de la consulta
+    console.error(error);
+  }
+}
+
+
+console.log("El token: " + obtenerToken());
 /*
 const bot = new Telegraf(TOKEN)
 
