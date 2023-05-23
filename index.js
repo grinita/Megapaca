@@ -18,8 +18,10 @@ const TOKEN = con.connect(function (err) {
     });
 });;
 
-
+console.log(TOKEN);
+/*
 const bot = new Telegraf(TOKEN)
+
 
 bot.command('test', ctx => {
     bot.telegram.sendMessage(ctx.chat.id, 'Agregar descuento de etiqueta',
@@ -76,3 +78,4 @@ bot.action('red', ctx => {
 })
 
 bot.launch()
+*/
