@@ -147,7 +147,7 @@ async function getDescuento(userId, color) {
   try {
     connection.connect();
 
-    const query = "SELECT descuento FROM carrito WHERE usuario = ? AND color = ?";
+    const query = "SELECT porcentaje FROM descuento WHERE usuario = ? AND color = ?";
     const [rows] = await connection.promise().query(query, [userId, color]);
 
     if (rows.length > 0) {
