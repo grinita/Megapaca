@@ -31,6 +31,7 @@ function mostrarPregunta(ctx, pregunta) {
                     { text: 'Celeste \u{1F48E}', callback_data: 'bblue' },
                 ],
                 [
+
                     { text: 'Amarillo \u{1F7E1}', callback_data: 'yellow' },
                     { text: 'Naranja \u{1F7E0}', callback_data: 'orange' },
                     { text: 'Blanco \u{26AA}', callback_data: 'white' },
@@ -59,83 +60,118 @@ function manejarRespuesta(ctx, respuesta) {
     } else {
         // Se completaron todas las preguntas
         ctx.reply('Has completado todos los descuentos, empieza a agregar ropa a tu carrito :)');
-        bot.handleUpdate({ message: { text: '/iniciarCarrito', chat: ctx.chat } });
     }
 }
 
 async function mostrarDescuentos(ctx) {
     const { id } = ctx.from;
-
+  
     try {
-        const descuentos = await obtenerDescuentosPorUsuario(id);
-
-        if (descuentos.length === 0) {
-            ctx.reply('No se encontraron descuentos disponibles.');
-            return;
-        }
-
-        ctx.reply('Estos son los descuentos disponibles:');
-
-        descuentos.forEach(descuento => {
-            ctx.reply(`${descuento.etiqueta} - ${descuento.descuento}% de descuento`);
+      const descuentos = await obtenerDescuentosPorUsuario(id);
+  
+      if (descuentos.length === 0) {
+        ctx.reply('No se encontraron descuentos para tu usuario.');
+      } else {
+        ctx.reply('Estos son tus descuentos:');
+        descuentos.forEach((descuento) => {
+          ctx.reply(`- ${descuento.color}: ${descuento.porcentaje}%`);
         });
+      }
     } catch (error) {
-        console.error('Error al obtener los descuentos:', error);
-        ctx.reply('Ocurrió un error al obtener los descuentos. Por favor, inténtalo nuevamente más tarde.');
+      console.error('Error al obtener los descuentos:', error);
+      ctx.reply('Ocurrió un error al obtener los descuentos. Por favor, intenta nuevamente más tarde.');
     }
-}
+  }
 
-async function limpiarCarrito(ctx) {
-    const { id } = ctx.from;
-
-    try {
-        const descuentos = await obtenerDescuentosPorUsuario(id);
-
-        if (descuentos.length === 0) {
-            ctx.reply('No se encontraron descuentos disponibles.');
-            return;
-        }
-
-        ctx.reply('El carrito se ha limpiado correctamente.');
-
-        // Eliminar el carrito del usuario en la base de datos
-        guardarRespuestaEnBD(id, null, null);
-    } catch (error) {
-        console.error('Error al limpiar el carrito:', error);
-        ctx.reply('Ocurrió un error al limpiar el carrito. Por favor, inténtalo nuevamente más tarde.');
-    }
-}
-
-// Crear una nueva instancia de Telegraf
-const iniciarBot = async () => {
+(async () => {
     const token = await obtenerToken();
+
     const bot = new Telegraf(token);
 
-    // Comando para iniciar el juego de descuentos
-    bot.command(["start", "empezar", "inicio", "iniciar"], (ctx) => {
-        const { id, first_name, username } = ctx.from;
+    bot.command(['start', 'empezar', 'inicio', 'iniciar'], (ctx) => {
+        // Obtener datos del usuario
+        const { id, first_name, last_name } = ctx.from;
+        const username = first_name + (last_name ? ' ' + last_name : '');
 
-        guardarUsuarioEnBD(id, first_name, username);
+        // Guardar usuario en la base de datos
+        guardarUsuarioEnBD(id, first_name, last_name);
 
+        // Enviar mensaje de bienvenida
+        ctx.reply(`¡Hola ${username}! Bienvenido(a) al bot.`);
+
+        // Iniciar las preguntas y desplegar el menú
         preguntaActual = 0;
-
-        // Mostrar la primera pregunta
         mostrarPregunta(ctx, descuentos[preguntaActual]);
     });
 
-    // Comando para mostrar los descuentos disponibles
-    bot.command("descuentos", mostrarDescuentos);
+    bot.action(colores, (ctx) => {
+        const respuesta = ctx.callbackQuery.data;
 
-    // Comando para limpiar el carrito
-    bot.command("limpiar", limpiarCarrito);
+        // Manejar la respuesta del usuario
+        manejarRespuesta(ctx, respuesta);
 
-    // Manejar la respuesta del usuario
-    bot.action(/.*/, (ctx) => {
-        manejarRespuesta(ctx, ctx.match[0]);
+        ctx.answerCbQuery();
     });
 
-    // Iniciar el bot
-    bot.launch();
-};
+    bot.command('/descuentos', mostrarDescuentos);
 
-iniciarBot().catch(error => console.error('Error al iniciar el bot:', error));
+    bot.command('test', ctx => {
+        bot.telegram.sendMessage(ctx.chat.id, 'Agregar descuento de etiqueta',
+            {
+                reply_markup: {
+                    inline_keyboard: [
+                        [
+                            { text: 'Rojo \u{1F534}', callback_data: 'red' },
+                            { text: 'Verde \u{1F7E2}', callback_data: 'green' },
+                            { text: 'Gris \u{1F518}', callback_data: 'gray' },
+                        ],
+                        [
+                            { text: 'Negro \u{26AB}', callback_data: 'black' },
+                            { text: 'Azul \u{1F535}', callback_data: 'blue' },
+                            { text: 'Celeste \u{1F48E}', callback_data: 'bblue' },
+                        ],
+                        [
+
+                            { text: 'Amarillo \u{1F7E1}', callback_data: 'yellow' },
+                            { text: 'Naranja \u{1F7E0}', callback_data: 'orange' },
+                            { text: 'Blanco \u{26AA}', callback_data: 'white' },
+                        ]
+                    ]
+                }
+            })
+    })
+
+    bot.action('descs', ctx => {
+        ctx.answerCbQuery();
+        bot.telegram.sendMessage(ctx.chat.id, '¿Qué descuento tiene la etiqueta roja?',
+            {
+                reply_markup: {
+                    inline_keyboard: [
+                        [
+
+
+                            { text: 'Precio normal', callback_data: 'red' },
+                            { text: '15%', callback_data: 'green' },
+                        ],
+                        [
+                            { text: '30%', callback_data: 'black' },
+                            { text: '50%', callback_data: 'blue' },
+                            { text: '60%', callback_data: 'bblue' },
+                        ],
+                        [
+
+                            { text: '70%', callback_data: 'yellow' },
+                            { text: '80%', callback_data: 'orange' },
+                            { text: '90%', callback_data: 'white' },
+                        ]
+                    ]
+                }
+            })
+    })
+
+    bot.launch()
+})();
+
+
+
+
