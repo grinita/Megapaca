@@ -151,14 +151,15 @@ async function mostrarDescuentos(ctx) {
         ctx.reply('Accediendo a la lista de descuentos existente.');
         // Llama al comando /descuentos
         bot.handleUpdate({ message: { text: '/descuentos', chat: ctx.chat } });
+      bot.handleUpdate({ message: { text: '/limpiar', chat: ctx.chat } });
     });
 
-    /*
+    
     bot.command('limpiar', (ctx) => {
         // Iniciar las preguntas y desplegar el menú
         preguntaActual = 0;
         mostrarPregunta(ctx, descuentos[preguntaActual]);
-    })*/
+    })
 
     bot.action(colores, (ctx) => {
         const respuesta = ctx.callbackQuery.data;
