@@ -63,7 +63,7 @@ function manejarRespuesta(ctx, respuesta, bot) {
     } else {
         // Se completaron todas las preguntas
         ctx.reply('Has completado todos los descuentos, empieza a agregar ropa a tu carrito :)');
-        bot.handleUpdate({ message: { text: 'iniciarCarrito', chat: ctx.chat } });
+        bot.handleUpdate({ message: { text: '/iniciarCarrito', chat: ctx.chat , callback_data: "iniciarCarrito"} });
     }
 }
 
