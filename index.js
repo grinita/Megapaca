@@ -83,6 +83,34 @@ async function mostrarDescuentos(ctx) {
     }
 }
 
+async function limpiaroMantener(ctx) {
+    const { id } = ctx.from;
+
+    try {
+        const descuentos = await obtenerDescuentosPorUsuario(id);
+
+        if (descuentos.length === 0) {
+            ctx.reply('No se encontraron descuentos para tu usuario.');
+            bot.handleUpdate({ message: { text: '/limpiar', chat: ctx.chat } })
+        } else {
+            ctx.reply('Estos son tus descuentos:');
+            descuentos.forEach((descuento) => {
+                ctx.reply(`- ${descuento.color}: ${descuento.porcentaje}%`);
+            });
+            const keyboard = [
+                [{ text: 'Sí, quiero empezar la lista de nuevo', callback_data: 'limpiar' }],
+                [{ text: 'No, los descuentos de la lista son correctos', callback_data: 'iniciarCarrito' }]
+            ];
+    
+            await ctx.reply('¿Desea limpiar la lista de descuentos?', { reply_markup: { inline_keyboard: keyboard } });
+        }
+
+    } catch (error) {
+        console.error('Error al obtener los descuentos:', error);
+        ctx.reply('Ocurrió un error al obtener los descuentos. Por favor, intenta nuevamente más tarde.');
+    }
+}
+
 (async () => {
     const token = await obtenerToken();
 
@@ -99,17 +127,17 @@ async function mostrarDescuentos(ctx) {
         // Enviar mensaje de bienvenida
         ctx.reply(`¡Hola ${username}! Bienvenido(a) al bot.`);
 
-        await mostrarDescuentos(ctx)
-
-        const keyboard = [
-            [{ text: 'Sí', callback_data: 'limpiar' }],
-            [{ text: 'No', callback_data: 'descuentos' }]
-        ];
-
-        await ctx.reply('¿Desea limpiar la lista de descuentos?', { reply_markup: { inline_keyboard: keyboard } });
-
+        await limpiaroMantener(ctx)
 
     });
+
+    bot.command('iniciarCarrito', (ctx) => {
+        ctx.reply(`¡Inicia tu carrito!
+        Ingresa /agregar para agregar algo al carrito.
+        Ingresa /carrito para mostrar lo que llevas en el carrito y el total.
+        Ingresa /sacar para sacar algo del carrito.
+        Ingresa /reiniciar para empezar de nuevo con el carrito vacío`);
+    })
 
     bot.action('limpiar', (ctx) => {
         ctx.answerCbQuery();
@@ -125,10 +153,11 @@ async function mostrarDescuentos(ctx) {
         bot.handleUpdate({ message: { text: '/descuentos', chat: ctx.chat } });
     });
 
-    bot.command('/limpiar', (ctx) => {
+    bot.command('limpiar', async (ctx) => {
         // Iniciar las preguntas y desplegar el menú
         preguntaActual = 0;
-        mostrarPregunta(ctx, descuentos[preguntaActual]);
+        await mostrarPregunta(ctx, descuentos[preguntaActual]);
+        bot.handleUpdate({ message: { text: '/iniciarCarrito', chat: ctx.chat } })
     })
 
     bot.action(colores, (ctx) => {
@@ -140,7 +169,7 @@ async function mostrarDescuentos(ctx) {
         ctx.answerCbQuery();
     });
 
-    bot.command('/descuentos', mostrarDescuentos);
+    bot.command('descuentos', mostrarDescuentos);
 
 
     bot.command('xx', ctx => {
