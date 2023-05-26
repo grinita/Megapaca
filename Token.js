@@ -142,105 +142,77 @@ async function obtenerDescuentosPorUsuario(usuarioId) {
 }
 
 
-
 // Función para obtener el descuento
 async function getDescuento(userId, color) {
-  return new Promise((resolve, reject) => {
-    connection.connect((err) => {
-      if (err) {
-        console.error('Error de conexión a la base de datos:', err);
-        return;
-      }
-      connection.query(
-        `SELECT descuento FROM carrito WHERE usuario = ? AND color = ?`,
-        [userId, color],
-        (error, results) => {
-          if (error) {
-            reject(error);
-          } else {
-            if (results.length > 0) {
-              resolve(results[0].descuento);
-            } else {
-              resolve(0);
-            }
-          }
-        }
-      );
-      connection.end(); // Cerrar la conexión después de obtener los resultados
-    });
-  });
+  try {
+    connection.connect();
+
+    const query = "SELECT descuento FROM carrito WHERE usuario = ? AND color = ?";
+    const [rows] = await connection.promise().query(query, [userId, color]);
+
+    if (rows.length > 0) {
+      return rows[0].descuento;
+    } else {
+      return 0;
+    }
+  } catch (error) {
+    throw error;
+  } finally {
+    connection.end();
+  }
 }
 
 // Función para insertar un registro en el carrito
 async function insertRegistro(userId, descripcion, precio, descuento, precioFinal, color) {
-  return new Promise((resolve, reject) => {
-    connection.connect((err) => {
-      if (err) {
-        console.error('Error de conexión a la base de datos:', err);
-        return;
-      }
-      connection.query(
-        `INSERT INTO carrito (usuario, descripcion, precio_normal, descuento, precio_final, color) VALUES (?, ?, ?, ?, ?, ?)`,
-        [userId, descripcion, precio, descuento, precioFinal, color],
-        (error, results) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(results);
-          }
-        }
-      );
-      connection.end(); // Cerrar la conexión después de obtener los resultados
-    });
-  });
+  try {
+    connection.connect();
+
+    const query = "INSERT INTO carrito (usuario, descripcion, precio_normal, descuento, precio_final, color) VALUES (?, ?, ?, ?, ?, ?)";
+    await connection.promise().query(query, [userId, descripcion, precio, descuento, precioFinal, color]);
+  } catch (error) {
+    throw error;
+  } finally {
+    connection.end();
+  }
 }
 
 // Función para obtener los registros del carrito
 async function getRegistrosCarrito(userId) {
-  return new Promise((resolve, reject) => {
-    connection.connect((err) => {
-      if (err) {
-        console.error('Error de conexión a la base de datos:', err);
-        return;
-      }
-      connection.query(
-        `SELECT * FROM carrito WHERE usuario = ?`,
-        [userId],
-        (error, results) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(results);
-          }
-        }
-      );
-      connection.end(); // Cerrar la conexión después de obtener los resultados
-    });
-  });
+  try {
+    connection.connect();
+
+    const query = "SELECT * FROM carrito WHERE usuario = ?";
+    const [rows] = await connection.promise().query(query, [userId]);
+    return rows;
+  } catch (error) {
+    throw error;
+  } finally {
+    connection.end();
+  }
 }
 
 // Función para eliminar un registro del carrito
-async function deleteRegistroCarrito(identificador, userId) {
-  return new Promise((resolve, reject) => {
-    connection.connect((err) => {
-      if (err) {
-        console.error('Error de conexión a la base de datos:', err);
-        return;
-      }
-      connection.query(
-        `DELETE FROM carrito WHERE id = ? AND usuario = ?`,
-        [identificador, userId],
-        (error, results) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(results);
-          }
-        }
-      );
-      connection.end(); // Cerrar la conexión después de obtener los resultados
-    });
-  });
+async function deleteRegistroCarrito(id, userId) {
+  try {
+    connection.connect();
+
+    let query;
+    let params;
+
+    if (id) {
+      query = "DELETE FROM carrito WHERE id = ? AND usuario = ?";
+      params = [id, userId];
+    } else {
+      query = "DELETE FROM carrito WHERE usuario = ?";
+      params = [userId];
+    }
+
+    await connection.promise().query(query, params);
+  } catch (error) {
+    throw error;
+  } finally {
+    connection.end();
+  }
 }
 
 
