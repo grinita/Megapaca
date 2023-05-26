@@ -151,7 +151,7 @@ async function getDescuento(userId, color) {
     const [rows] = await connection.promise().query(query, [userId, color]);
 
     if (rows.length > 0) {
-      return rows[0].descuento;
+      return rows[0].porcentaje;
     } else {
       return 0;
     }

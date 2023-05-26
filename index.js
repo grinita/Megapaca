@@ -238,7 +238,7 @@ async function iniciarBot() {
             const precioFinal = parseFloat(precio) - ((parseFloat(precio) * descuento) / 100);
 
             // Insertar el registro en el carrito
-            await insertRegistro(userId, descripcion, precio, descuento, precioFinal, color);
+            await insertRegistro(userId, descripcion.replace("/agregar ",""), precio, descuento, precioFinal, color);
 
             ctx.reply('Se ha agregado el producto al carrito.');
         } catch (error) {
