@@ -88,7 +88,7 @@ async function mostrarDescuentos(ctx) {
 
     const bot = new Telegraf(token);
 
-    bot.command(['start', 'empezar', 'inicio', 'iniciar'], (ctx) => {
+    bot.command(['start', 'empezar', 'inicio', 'iniciar'], async (ctx) => {
         // Obtener datos del usuario
         const { id, first_name, last_name } = ctx.from;
         const username = first_name + (last_name ? ' ' + last_name : '');
@@ -99,14 +99,14 @@ async function mostrarDescuentos(ctx) {
         // Enviar mensaje de bienvenida
         ctx.reply(`¡Hola ${username}! Bienvenido(a) al bot.`);
 
-        mostrarDescuentos(ctx)
+        await mostrarDescuentos(ctx)
 
         const keyboard = [
             [{ text: 'Sí', callback_data: 'limpiar' }],
             [{ text: 'No', callback_data: 'descuentos' }]
         ];
 
-        ctx.reply('¿Desea limpiar la lista de descuentos?', { reply_markup: { inline_keyboard: keyboard } });
+        await ctx.reply('¿Desea limpiar la lista de descuentos?', { reply_markup: { inline_keyboard: keyboard } });
 
 
     });
@@ -143,7 +143,7 @@ async function mostrarDescuentos(ctx) {
     bot.command('/descuentos', mostrarDescuentos);
 
 
-    bot.command('colores', ctx => {
+    bot.command('xx', ctx => {
         bot.telegram.sendMessage(ctx.chat.id, 'Agregar descuento de etiqueta',
             {
                 reply_markup: {
