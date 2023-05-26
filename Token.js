@@ -1,15 +1,22 @@
 // Token.js
-
 const mysql = require('mysql2');
 
-async function obtenerToken() {
-  const connection = mysql.createConnection({
-    host: "d8f406ed5c65",
-    user: "root",
-    password: "change-me",
-    database: "megapaca"
-  });
+const connection = mysql.createConnection({
+  host: 'd8f406ed5c65',
+  user: 'root',
+  password: 'change-me',
+  database: 'megapaca'
+});
 
+connection.connect((error) => {
+  if (error) {
+    console.error('Error connecting to the database: ', error);
+  } else {
+    console.log('Connected to the database!');
+  }
+});
+
+async function obtenerToken() {
   return new Promise((resolve, reject) => {
     connection.connect((err) => {
       if (err) {
@@ -30,14 +37,6 @@ async function obtenerToken() {
 }
 
 async function guardarUsuarioEnBD(usuarioId, firstName, lastName) {
-  // Conexión a la base de datos
-  const connection = mysql.createConnection({
-    host: "d8f406ed5c65",
-    user: "root",
-    password: "change-me",
-    database: "megapaca"
-  });
-
   return new Promise((resolve, reject) => {
     connection.connect((err) => {
       if (err) {
@@ -79,14 +78,6 @@ async function guardarUsuarioEnBD(usuarioId, firstName, lastName) {
 
 
 async function guardarRespuestaEnBD(usuarioId, descuento, color) {
-  // Conexión a la base de datos
-  const connection = mysql.createConnection({
-    host: "d8f406ed5c65",
-    user: "root",
-    password: "change-me",
-    database: "megapaca"
-  });
-
   connection.connect((err) => {
     if (err) {
       console.error('Error de conexión a la base de datos:', err);
@@ -136,15 +127,6 @@ async function guardarRespuestaEnBD(usuarioId, descuento, color) {
 
 
 async function obtenerDescuentosPorUsuario(usuarioId) {
-
-  // Conexión a la base de datos
-  const connection = mysql.createConnection({
-    host: "d8f406ed5c65",
-    user: "root",
-    password: "change-me",
-    database: "megapaca"
-  });
-
   return new Promise((resolve, reject) => {
     connection.connect((err) => {
       if (err) {
@@ -167,9 +149,87 @@ async function obtenerDescuentosPorUsuario(usuarioId) {
   });
 }
 
+// Función para obtener el descuento
+async function getDescuento(userId, color) {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT descuento FROM carrito WHERE usuario = ? AND color = ?`,
+      [userId, color],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        } else {
+          if (results.length > 0) {
+            resolve(results[0].descuento);
+          } else {
+            resolve(0);
+          }
+        }
+      }
+    );
+  });
+}
+
+// Función para insertar un registro en el carrito
+async function insertRegistro(userId, descripcion, precio, descuento, precioFinal, color) {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `INSERT INTO carrito (usuario, descripcion, precio_normal, descuento, precio_final, color) VALUES (?, ?, ?, ?, ?, ?)`,
+      [userId, descripcion, precio, descuento, precioFinal, color],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(results);
+        }
+      }
+    );
+  });
+}
+
+// Función para obtener los registros del carrito
+async function getRegistrosCarrito(userId) {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT * FROM carrito WHERE usuario = ?`,
+      [userId],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(results);
+        }
+      }
+    );
+  });
+}
+
+// Función para eliminar un registro del carrito
+async function deleteRegistroCarrito(identificador, userId) {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `DELETE FROM carrito WHERE id = ? AND usuario = ?`,
+      [identificador, userId],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(results);
+        }
+      }
+    );
+  });
+}
+
+
 module.exports = {
   obtenerToken,
   guardarUsuarioEnBD,
   guardarRespuestaEnBD,
-  obtenerDescuentosPorUsuario
+  obtenerDescuentosPorUsuario,
+  getDescuento,
+  insertRegistro,
+  getRegistrosCarrito,
+  deleteRegistroCarrito
 };
+

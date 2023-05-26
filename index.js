@@ -1,5 +1,5 @@
 const { Telegraf } = require("telegraf");
-const { obtenerToken, guardarUsuarioEnBD, guardarRespuestaEnBD, obtenerDescuentosPorUsuario } = require('./Token');
+const { obtenerToken, guardarUsuarioEnBD, guardarRespuestaEnBD, obtenerDescuentosPorUsuario, getDescuento, insertRegistro, getRegistrosCarrito, deleteRegistroCarrito } = require('./Token');
 
 // Arreglo de colores
 const colores = ['Rojo', 'Verde', 'Gris', 'Negro', 'Azul', 'Celeste', 'Amarillo', 'Naranja', 'Blanco'];
@@ -21,19 +21,19 @@ function mostrarPregunta(ctx, pregunta) {
         reply_markup: {
             inline_keyboard: [
                 [
-                    { text: 'Rojo \u{1F534}', callback_data: 'Rojo' },
-                    { text: 'Verde \u{1F7E2}', callback_data: 'Verde' },
-                    { text: 'Gris \u{1F518}', callback_data: 'Gris' },
+                    { text: 'Rojo \u{1F534}', callback_data: 'rojo' },
+                    { text: 'Verde \u{1F7E2}', callback_data: 'verde' },
+                    { text: 'Gris \u{1F518}', callback_data: 'gris' },
                 ],
                 [
-                    { text: 'Negro \u{26AB}', callback_data: 'Negro' },
-                    { text: 'Azul \u{1F535}', callback_data: 'Azul' },
-                    { text: 'Celeste \u{1F48E}', callback_data: 'Celeste' },
+                    { text: 'Negro \u{26AB}', callback_data: 'negro' },
+                    { text: 'Azul \u{1F535}', callback_data: 'azul' },
+                    { text: 'Celeste \u{1F48E}', callback_data: 'celeste' },
                 ],
                 [
-                    { text: 'Amarillo \u{1F7E1}', callback_data: 'Amarillo' },
-                    { text: 'Naranja \u{1F7E0}', callback_data: 'Naranja' },
-                    { text: 'Blanco \u{26AA}', callback_data: 'Blanco' },
+                    { text: 'Amarillo \u{1F7E1}', callback_data: 'amarillo' },
+                    { text: 'Naranja \u{1F7E0}', callback_data: 'naranja' },
+                    { text: 'Blanco \u{26AA}', callback_data: 'blanco' },
                 ]
             ]
         },
@@ -216,7 +216,102 @@ async function iniciarBot() {
         });
     });
 
-    bot.launch();
+
+    // Comando /agregar
+    bot.command('agregar', async (ctx) => {
+        const userId = ctx.message.from.id;
+        const messageText = ctx.message.text;
+
+        // Extraer los valores ingresados por el usuario
+        const [, descripcion, precio, color] = messageText.split(',');
+
+        try {
+            // Obtener el descuento
+            const descuento = await getDescuento(userId, color);
+
+            // Calcular el precio final con descuento
+            const precioFinal = parseFloat(precio) - (parseFloat(precio) * descuento) / 100;
+
+            // Insertar el registro en el carrito
+            await insertRegistro(userId, descripcion, precio, descuento, precioFinal, color);
+
+            ctx.reply('Se ha agregado el producto al carrito.');
+        } catch (error) {
+            console.error('Error al agregar el producto:', error);
+            ctx.reply('Ocurrió un error al agregar el producto.');
+        }
+    });
+
+    // Comando /carrito
+    bot.command('carrito', async (ctx) => {
+        const userId = ctx.message.from.id;
+
+        try {
+            // Obtener los registros del carrito
+            const registros = await getRegistrosCarrito(userId);
+
+            // Construir el mensaje de respuesta
+            let message = 'Carrito de compras:\n\n';
+
+            if (registros.length > 0) {
+                for (const registro of registros) {
+                    message += `IDENTIFICADOR: ${registro.id}\n`;
+                    message += `DESCRIPCIÓN: ${registro.descripcion}\n`;
+                    message += `PRECIO CON DESCUENTO: ${registro.precio_final} (${registro.precio_normal} PRECIO EN LA ETIQUETA)\n`;
+                    message += `DESCUENTO: ${registro.descuento}\n`;
+                    message += `COLOR ETIQUETA: ${registro.color}\n\n`;
+                }
+            } else {
+                message += 'El carrito está vacío.';
+            }
+
+            ctx.reply(message);
+        } catch (error) {
+            console.error('Error al obtener el carrito:', error);
+            ctx.reply('Ocurrió un error al obtener el carrito.');
+        }
+    });
+
+    // Comando /sacar
+    bot.command('sacar', async (ctx) => {
+        const userId = ctx.message.from.id;
+        const messageText = ctx.message.text;
+
+        // Extraer el identificador ingresado por el usuario
+        const [, identificador] = messageText.split(' ');
+
+        try {
+            // Eliminar el registro del carrito
+            await deleteRegistroCarrito(identificador, userId);
+
+            ctx.reply('Se ha eliminado el producto del carrito.');
+        } catch (error) {
+            console.error('Error al eliminar el producto:', error);
+            ctx.reply('Ocurrió un error al eliminar el producto.');
+        }
+    });
+
+    // Comando /reiniciar
+    bot.command('reiniciar', async (ctx) => {
+        const userId = ctx.message.from.id;
+
+        try {
+            // Eliminar todos los registros del carrito
+            await deleteRegistroCarrito(null, userId);
+
+            ctx.reply('Se ha reiniciado el carrito.');
+        } catch (error) {
+            console.error('Error al reiniciar el carrito:', error);
+            ctx.reply('Ocurrió un error al reiniciar el carrito.');
+        }
+    });
+
+    // Iniciar el bot
+    bot.launch().then(() => {
+        console.log('Bot de Telegram iniciado');
+    }).catch((error) => {
+        console.error('Error al iniciar el bot de Telegram:', error);
+    });
 }
 
 iniciarBot();
