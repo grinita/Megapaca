@@ -275,10 +275,10 @@ async function iniciarBot() {
 
             // Construir el mensaje de respuesta
             let message = 'Carrito de compras:\n\n';
-            let tabla = `|  ID  | Descripción                  | Precio |\n`;
+            let tabla = `|  ID  | Descripción               | Precio |\n`;
 
             let espacios_id = 6;
-            let espacios_descripcion = 30;
+            let espacios_descripcion = 27;
             let espacios_precio = 8;
         
             if (registros.length > 0) {
