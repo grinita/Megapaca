@@ -65,23 +65,23 @@ function manejarRespuesta(ctx, respuesta) {
 
 async function mostrarDescuentos(ctx) {
     const { id } = ctx.from;
-  
+
     try {
-      const descuentos = await obtenerDescuentosPorUsuario(id);
-  
-      if (descuentos.length === 0) {
-        ctx.reply('No se encontraron descuentos para tu usuario.');
-      } else {
-        ctx.reply('Estos son tus descuentos:');
-        descuentos.forEach((descuento) => {
-          ctx.reply(`- ${descuento.color}: ${descuento.porcentaje}%`);
-        });
-      }
+        const descuentos = await obtenerDescuentosPorUsuario(id);
+
+        if (descuentos.length === 0) {
+            ctx.reply('No se encontraron descuentos para tu usuario.');
+        } else {
+            ctx.reply('Estos son tus descuentos:');
+            descuentos.forEach((descuento) => {
+                ctx.reply(`- ${descuento.color}: ${descuento.porcentaje}%`);
+            });
+        }
     } catch (error) {
-      console.error('Error al obtener los descuentos:', error);
-      ctx.reply('Ocurrió un error al obtener los descuentos. Por favor, intenta nuevamente más tarde.');
+        console.error('Error al obtener los descuentos:', error);
+        ctx.reply('Ocurrió un error al obtener los descuentos. Por favor, intenta nuevamente más tarde.');
     }
-  }
+}
 
 (async () => {
     const token = await obtenerToken();
@@ -99,10 +99,23 @@ async function mostrarDescuentos(ctx) {
         // Enviar mensaje de bienvenida
         ctx.reply(`¡Hola ${username}! Bienvenido(a) al bot.`);
 
+        mostrarDescuentos(ctx)
+
+        const keyboard = [
+            [{ text: 'Sí', callback_data: 'limpiar' }],
+            [{ text: 'No', callback_data: 'descuentos' }]
+        ];
+
+        ctx.reply('¿Desea limpiar la lista de descuentos?', { reply_markup: { inline_keyboard: keyboard } });
+
+
+    });
+
+    bot.command('/limpiar', (ctx) => {
         // Iniciar las preguntas y desplegar el menú
         preguntaActual = 0;
         mostrarPregunta(ctx, descuentos[preguntaActual]);
-    });
+    })
 
     bot.action(colores, (ctx) => {
         const respuesta = ctx.callbackQuery.data;
@@ -115,7 +128,21 @@ async function mostrarDescuentos(ctx) {
 
     bot.command('/descuentos', mostrarDescuentos);
 
-    bot.command('test', ctx => {
+    bot.action('limpiar', (ctx) => {
+        ctx.answerCbQuery();
+        ctx.reply('Limpieza realizada. Lista de descuentos eliminada.');
+        // Llama al comando /limpiar
+        bot.handleUpdate({ message: { text: '/limpiar', chat: ctx.chat } });
+    });
+
+    bot.action('descuentos', (ctx) => {
+        ctx.answerCbQuery();
+        ctx.reply('Accediendo a la lista de descuentos existente.');
+        // Llama al comando /descuentos
+        bot.handleUpdate({ message: { text: '/descuentos', chat: ctx.chat } });
+    });
+
+    bot.command('colores', ctx => {
         bot.telegram.sendMessage(ctx.chat.id, 'Agregar descuento de etiqueta',
             {
                 reply_markup: {
@@ -141,7 +168,7 @@ async function mostrarDescuentos(ctx) {
             })
     })
 
-    bot.action('red', ctx => {
+    bot.action('menudescuentos', ctx => {
         ctx.answerCbQuery();
         bot.telegram.sendMessage(ctx.chat.id, '¿Qué descuento tiene la etiqueta roja?',
             {
