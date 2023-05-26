@@ -232,7 +232,8 @@ async function iniciarBot() {
 
         try {
             // Obtener el descuento
-            const descuento = await getDescuento(userId, color);
+            const descuento = await getDescuento(userId, color.replace(" ","").toLowerCase());
+            console.log("descuento encontrado: "+descuento)
 
             // Calcular el precio final con descuento
             const precioFinal = parseFloat(precio) - ((parseFloat(precio) * descuento) / 100);
