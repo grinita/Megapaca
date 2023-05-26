@@ -260,13 +260,16 @@ async function iniciarBot() {
             let message = 'Carrito de compras:\n\n';
 
             if (registros.length > 0) {
+                var total = 0
                 for (const registro of registros) {
+                    total += parseFloat(registro.precio_final).toFixed(2)
                     message += `\nIDENTIFICADOR: ${registro.id}\n`;
                     message += `DESCRIPCIÓN: ${registro.descripcion}\n`;
-                    message += `PRECIO CON DESCUENTO: *Q${parseFloat(registro.precio_final).toFixed(2)}*\n`;
+                    message += `PRECIO CON DESCUENTO: <b>Q${parseFloat(registro.precio_final).toFixed(2)}</b>\n`;
                     message += `(Color: ${capitalizeFirstLetter(registro.color)}, precio en la etiqueta: ${registro.precio_normal}, descuento: ${registro.descuento})\n`;
-                    message += '--------------------------------------------------------------------\n';
+                    message += '__________________________\n';
                 }
+                message += `\n <b>TOTAL: Q ${total}</b>`
             } else {
                 message += 'El carrito está vacío.';
             }
