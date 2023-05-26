@@ -129,10 +129,11 @@ async function iniciarBot() {
 
     bot.action('iniciarCarrito', (ctx) => {
         ctx.reply(`¡Inicia tu carrito!
-        Ingresa /agregar para agregar algo al carrito.
+        Ingresa /agregar <descripcion de la prenda>, <precio en la etiqueta>, <color de la etiqueta> para agregar algo al carrito. Ejemplo: Encontraste una blusa blanca con etiqueta roja que dice Q15, ingresa: */agregar blusa blanca, 15, rojo*
         Ingresa /carrito para mostrar lo que llevas en el carrito y el total.
-        Ingresa /sacar para sacar algo del carrito.
-        Ingresa /reiniciar para empezar de nuevo con el carrito vacío`);
+        Ingresa /sacar <identificador> para sacar algo del carrito. El identificador se puede encontrar ingresando /carrito. Ejemplo: Quieres eliminar el articulo con identificador 653: */sacar 653*
+        Ingresa /reiniciar para empezar de nuevo con el carrito vacío
+        Ingresa /total para tener solamente el total de tu carrito, sin especificacion de los productos`);
     });
 
     bot.action('limpiar', (ctx) => {
@@ -223,7 +224,7 @@ async function iniciarBot() {
         const messageText = ctx.message.text;
 
         // Extraer los valores ingresados por el usuario
-        const [, descripcion, precio, color] = messageText.split(',');
+        const [descripcion, precio, color] = messageText.split(',');
 
         try {
             // Obtener el descuento
