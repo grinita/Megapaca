@@ -44,7 +44,7 @@ function mostrarPregunta(ctx, pregunta) {
 }
 
 // Función para manejar la respuesta del usuario
-function manejarRespuesta(ctx, respuesta) {
+function manejarRespuesta(ctx, respuesta, bot) {
     const { id } = ctx.from;
     const pregunta = descuentos[preguntaActual];
 
@@ -160,7 +160,7 @@ async function iniciarBot() {
         const respuesta = ctx.callbackQuery.data;
 
         // Manejar la respuesta del usuario
-        manejarRespuesta(ctx, respuesta);
+        manejarRespuesta(ctx, respuesta, bot);
 
         ctx.answerCbQuery();
     });
