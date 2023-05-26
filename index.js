@@ -140,10 +140,19 @@ async function iniciarBot() {
     });
 
     bot.action('iniciarCarrito', (ctx) => {
-        ctx.reply(`¡Inicia tu carrito!
-        -Ingresa /agregar <descripcion de la prenda>, <precio en la etiqueta>, <color de la etiqueta> para agregar algo al carrito. Ejemplo: Encontraste una blusa blanca con etiqueta roja que dice Q15, ingresa: */agregar blusa blanca, 15, rojo*
+        ctx.replyWithHTML(`¡Inicia tu carrito!
+        -Ingresa /agregar <descripcion de la prenda>, <precio en la etiqueta>, <color de la etiqueta> para agregar algo al carrito. Ejemplo: Encontraste una blusa blanca con etiqueta roja que dice Q15, ingresa: <b>/agregar blusa blanca, 15, rojo</b>
         -Ingresa /carrito para mostrar lo que llevas en el carrito y el total.
-        -Ingresa /sacar <identificador> para sacar algo del carrito. El identificador se puede encontrar ingresando /carrito. Ejemplo: Quieres eliminar el articulo con identificador 653: */sacar 653*
+        -Ingresa /sacar <identificador> para sacar algo del carrito. El identificador se puede encontrar ingresando /carrito. Ejemplo: Quieres eliminar el articulo con identificador 653: <b>/sacar 653</b>
+        -Ingresa /reiniciar para empezar de nuevo con el carrito vacío
+        -Ingresa /total para tener solamente el total de tu carrito, sin especificacion de los productos`,{ parse_mode: 'MarkdownV2' });
+    });
+
+    bot.command('iniciarCarrito', (ctx) => {
+        ctx.replyWithHTML(`¡Inicia tu carrito!
+        -Ingresa /agregar <descripcion de la prenda>, <precio en la etiqueta>, <color de la etiqueta> para agregar algo al carrito. Ejemplo: Encontraste una blusa blanca con etiqueta roja que dice Q15, ingresa: <b>/agregar blusa blanca, 15, rojo</b>
+        -Ingresa /carrito para mostrar lo que llevas en el carrito y el total.
+        -Ingresa /sacar <identificador> para sacar algo del carrito. El identificador se puede encontrar ingresando /carrito. Ejemplo: Quieres eliminar el articulo con identificador 653: <b>/sacar 653</b>
         -Ingresa /reiniciar para empezar de nuevo con el carrito vacío
         -Ingresa /total para tener solamente el total de tu carrito, sin especificacion de los productos`,{ parse_mode: 'MarkdownV2' });
     });
@@ -266,7 +275,7 @@ async function iniciarBot() {
 
             // Construir el mensaje de respuesta
             let message = 'Carrito de compras:\n\n';
-            let tabla = `|   ID   | Descripción                  | Precio |\n`;
+            let tabla = `|  ID  | Descripción                  | Precio |\n`;
 
             let espacios_id = 6;
             let espacios_descripcion = 30;
