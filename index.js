@@ -111,6 +111,20 @@ async function mostrarDescuentos(ctx) {
 
     });
 
+    bot.action('limpiar', (ctx) => {
+        ctx.answerCbQuery();
+        ctx.reply('Limpieza realizada. Lista de descuentos eliminada.');
+        // Llama al comando /limpiar
+        bot.handleUpdate({ message: { text: '/limpiar', chat: ctx.chat } });
+    });
+
+    bot.action('descuentos', (ctx) => {
+        ctx.answerCbQuery();
+        ctx.reply('Accediendo a la lista de descuentos existente.');
+        // Llama al comando /descuentos
+        bot.handleUpdate({ message: { text: '/descuentos', chat: ctx.chat } });
+    });
+
     bot.command('/limpiar', (ctx) => {
         // Iniciar las preguntas y desplegar el menú
         preguntaActual = 0;
@@ -128,19 +142,6 @@ async function mostrarDescuentos(ctx) {
 
     bot.command('/descuentos', mostrarDescuentos);
 
-    bot.action('limpiar', (ctx) => {
-        ctx.answerCbQuery();
-        ctx.reply('Limpieza realizada. Lista de descuentos eliminada.');
-        // Llama al comando /limpiar
-        bot.handleUpdate({ message: { text: '/limpiar', chat: ctx.chat } });
-    });
-
-    bot.action('descuentos', (ctx) => {
-        ctx.answerCbQuery();
-        ctx.reply('Accediendo a la lista de descuentos existente.');
-        // Llama al comando /descuentos
-        bot.handleUpdate({ message: { text: '/descuentos', chat: ctx.chat } });
-    });
 
     bot.command('colores', ctx => {
         bot.telegram.sendMessage(ctx.chat.id, 'Agregar descuento de etiqueta',

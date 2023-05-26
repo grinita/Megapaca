@@ -38,25 +38,45 @@ async function guardarUsuarioEnBD(usuarioId, firstName, lastName) {
     database: "megapaca"
   });
 
-  connection.connect((err) => {
-    if (err) {
-      console.error('Error de conexión a la base de datos:', err);
-      return;
-    }
-
-    const query = `INSERT INTO usuario (id, first_name, last_name) VALUES (${usuarioId}, '${firstName}', '${lastName}')`;
-
-    connection.query(query, (error, results) => {
-      if (error) {
-        console.error('Error al guardar el usuario en la base de datos:', error);
-      } else {
-        console.log('Usuario guardado correctamente en la base de datos');
+  return new Promise((resolve, reject) => {
+    connection.connect((err) => {
+      if (err) {
+        console.error('Error de conexión a la base de datos:', err);
+        reject(err);
+        return;
       }
 
-      connection.end(); // Cerrar la conexión después de ejecutar la consulta
+      const query = `SELECT * FROM usuario WHERE id = ${usuarioId}`;
+
+      connection.query(query, (error, results) => {
+        if (error) {
+          console.error('Error al consultar el usuario en la base de datos:', error);
+          reject(error);
+        } else {
+          if (results.length > 0) {
+            console.log('El usuario ya existe en la base de datos. No se realizará ninguna acción.');
+            resolve();
+          } else {
+            const insertQuery = `INSERT INTO usuario (id, first_name, last_name) VALUES (${usuarioId}, '${firstName}', '${lastName}')`;
+
+            connection.query(insertQuery, (insertError) => {
+              if (insertError) {
+                console.error('Error al guardar el usuario en la base de datos:', insertError);
+                reject(insertError);
+              } else {
+                console.log('Usuario guardado correctamente en la base de datos');
+                resolve();
+              }
+            });
+          }
+        }
+
+        connection.end(); // Cerrar la conexión después de ejecutar la consulta
+      });
     });
   });
 }
+
 
 async function guardarRespuestaEnBD(usuarioId, descuento, color) {
   // Conexión a la base de datos
