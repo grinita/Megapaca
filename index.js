@@ -21,19 +21,19 @@ function mostrarPregunta(ctx, pregunta) {
         reply_markup: {
             inline_keyboard: [
                 [
-                    { text: 'Rojo \u{1F534}', callback_data: 'Rojo' },
-                    { text: 'Verde \u{1F7E2}', callback_data: 'Verde' },
-                    { text: 'Gris \u{1F518}', callback_data: 'Gris' },
+                    { text: 'Rojo \u{1F534}', callback_data: 'red' },
+                    { text: 'Verde \u{1F7E2}', callback_data: 'green' },
+                    { text: 'Gris \u{1F518}', callback_data: 'gray' },
                 ],
                 [
-                    { text: 'Negro \u{26AB}', callback_data: 'Negro' },
-                    { text: 'Azul \u{1F535}', callback_data: 'Azul' },
-                    { text: 'Celeste \u{1F48E}', callback_data: 'Celeste' },
+                    { text: 'Negro \u{26AB}', callback_data: 'black' },
+                    { text: 'Azul \u{1F535}', callback_data: 'blue' },
+                    { text: 'Celeste \u{1F48E}', callback_data: 'bblue' },
                 ],
                 [
-                    { text: 'Amarillo \u{1F7E1}', callback_data: 'Amarillo' },
-                    { text: 'Naranja \u{1F7E0}', callback_data: 'Naranja' },
-                    { text: 'Blanco \u{26AA}', callback_data: 'Blanco' },
+                    { text: 'Amarillo \u{1F7E1}', callback_data: 'yellow' },
+                    { text: 'Naranja \u{1F7E0}', callback_data: 'orange' },
+                    { text: 'Blanco \u{26AA}', callback_data: 'white' },
                 ]
             ]
         },
@@ -112,7 +112,7 @@ const iniciarBot = async () => {
     const bot = new Telegraf(token);
 
     // Comando para iniciar el juego de descuentos
-    bot.command('iniciar', (ctx) => {
+    bot.command(["start", "empezar", "inicio", "iniciar"], (ctx) => {
         const { id, first_name, username } = ctx.from;
 
         guardarUsuarioEnBD(id, first_name, username);
@@ -124,10 +124,10 @@ const iniciarBot = async () => {
     });
 
     // Comando para mostrar los descuentos disponibles
-    bot.command('descuentos', mostrarDescuentos);
+    bot.command("descuentos", mostrarDescuentos);
 
     // Comando para limpiar el carrito
-    bot.command('limpiar', limpiarCarrito);
+    bot.command("limpiar", limpiarCarrito);
 
     // Manejar la respuesta del usuario
     bot.action(/.*/, (ctx) => {
