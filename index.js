@@ -1,34 +1,83 @@
-
 const { Telegraf } = require("telegraf");
-// main.js
+const { obtenerToken, guardarUsuarioEnBD, guardarRespuestaEnBD } = require('./Token');
 
-const { obtenerToken } = require('./Token');
+// Arreglo de colores
+const colores = ['Rojo', 'Verde', 'Gris', 'Negro', 'Azul', 'Celeste', 'Amarillo', 'Naranja', 'Blanco'];
 
-async function obtenerTokenValor() {
-    try {
-        const token = await obtenerToken();
-        console.log("FUNCION: Se obtuvo el token: " + token)
-        return token;
-    } catch (error) {
-        console.error("Error al obtener el token:", error);
-        return null;
+// Arreglo de descuentos
+const descuentos = [0, 15, 30, 40, 50, 60, 70, 80, 90];
+
+// Índice de la pregunta actual
+let preguntaActual = 0;
+
+// Función para mostrar una pregunta y el menú de opciones
+function mostrarPregunta(ctx, pregunta) {
+    const { id } = ctx.from;
+
+    // Verificar si es una pregunta de descuento o de precio normal
+    const preguntaText = pregunta !== 0 ? `¿Qué etiqueta tiene ${pregunta}% de descuento?` : '¿Qué etiqueta está a precio normal?';
+
+    ctx.reply(preguntaText, {
+        reply_markup: {
+            inline_keyboard: [
+                colores.map((color) => ({ text: color, callback_data: color })),
+            ],
+        },
+    });
+
+    // Guardar la pregunta en la base de datos
+    guardarRespuestaEnBD(id, pregunta, null);
+}
+
+// Función para manejar la respuesta del usuario
+function manejarRespuesta(ctx, respuesta) {
+    const { id } = ctx.from;
+    const pregunta = descuentos[preguntaActual];
+
+    // Guardar la respuesta en la base de datos
+    guardarRespuestaEnBD(id, pregunta, respuesta);
+
+    preguntaActual++;
+
+    if (preguntaActual < descuentos.length) {
+        // Mostrar la siguiente pregunta
+        mostrarPregunta(ctx, descuentos[preguntaActual]);
+    } else {
+        // Se completaron todas las preguntas
+        ctx.reply('Has completado todos los descuentos, empieza a agregar ropa a tu carrito :)');
     }
 }
 
 (async () => {
-    const token = await obtenerTokenValor();
-    console.log("Este es el token:", token);
+    const token = await obtenerToken();
 
-    const bot = new Telegraf(token)
+    const bot = new Telegraf(token);
 
     bot.command(['start', 'empezar', 'inicio', 'iniciar'], (ctx) => {
-        // Obtiene el nombre de usuario del mensaje
-        const { first_name, last_name } = ctx.from;
+        // Obtener datos del usuario
+        const { id, first_name, last_name } = ctx.from;
         const username = first_name + (last_name ? ' ' + last_name : '');
 
-        // Envía el mensaje de bienvenida con el nombre del usuario
+        // Guardar usuario en la base de datos
+        guardarUsuarioEnBD(id, first_name, last_name);
+
+        // Enviar mensaje de bienvenida
         ctx.reply(`¡Hola ${username}! Bienvenido(a) al bot.`);
+
+        // Iniciar las preguntas y desplegar el menú
+        preguntaActual = 0;
+        mostrarPregunta(ctx, descuentos[preguntaActual]);
     });
+
+    bot.action(colores, (ctx) => {
+        const respuesta = ctx.callbackQuery.data;
+
+        // Manejar la respuesta del usuario
+        manejarRespuesta(ctx, respuesta);
+
+        ctx.answerCbQuery();
+    });
+
 
     bot.command('test', ctx => {
         bot.telegram.sendMessage(ctx.chat.id, 'Agregar descuento de etiqueta',
