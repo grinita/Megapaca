@@ -264,16 +264,16 @@ async function iniciarBot() {
                     total += parseFloat(registro.precio_final).toFixed(2)
                     message += `\nIDENTIFICADOR: ${registro.id}\n`;
                     message += `DESCRIPCIÓN: ${registro.descripcion}\n`;
-                    message += `PRECIO CON DESCUENTO: *Q${parseFloat(registro.precio_final).toFixed(2)}*\n`;
+                    message += `PRECIO CON DESCUENTO: <b>Q${parseFloat(registro.precio_final).toFixed(2)}</b>\n`;
                     message += `(Color: ${capitalizeFirstLetter(registro.color)}, precio en la etiqueta: ${registro.precio_normal}, descuento: ${registro.descuento})\n`;
                     message += '__________________________\n';
                 }
-                message += `\n *TOTAL: Q ${total}*`
+                message += `\n <b>TOTAL: Q ${total}</b>`
             } else {
                 message += 'El carrito está vacío.';
             }
 
-            ctx.reply(message,{ parse_mode: 'MarkdownV2' });
+            ctx.replyWithHTML(message);
         } catch (error) {
             console.error('Error al obtener el carrito:', error);
             ctx.reply('Ocurrió un error al obtener el carrito.');
