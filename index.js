@@ -110,9 +110,10 @@ async function mostrarDescuentos(ctx) {
                 bot.handleUpdate({ message: { text: '/limpiar', chat: ctx.chat } })
             } else {
                 ctx.reply('Estos son tus descuentos:');
-                descuentos.forEach((descuento) => {
+                await descuentos.forEach((descuento) => {
                     ctx.reply(`- ${descuento.color}: ${descuento.porcentaje}%`);
                 });
+                
                 const keyboard = [
                     [{ text: 'Sí, quiero empezar la lista de nuevo', callback_data: 'limpiar' }],
                     [{ text: 'No, los descuentos de la lista son correctos', callback_data: 'iniciarCarrito' }]
