@@ -273,15 +273,15 @@ async function iniciarBot() {
             let espacios_precio = 8;
         
             if (registros.length > 0) {
-                var total = parseFloat(0)
+                var total = 0.00
                 for (const registro of registros) {
-                    total += parseFloat(registro.precio_final).toFixed(2)
+                    total += registro.precio_final
                     message += `\nIDENTIFICADOR: ${registro.id}\n`;
                     message += `DESCRIPCIÓN: ${registro.descripcion}\n`;
                     message += `PRECIO CON DESCUENTO: <b>Q${parseFloat(registro.precio_final).toFixed(2)}</b>\n`;
                     message += `(Color: ${capitalizeFirstLetter(registro.color)}, precio en la etiqueta: ${registro.precio_normal}, descuento: ${registro.descuento})\n`;
                     message += '__________________________\n';
-                    tabla += `| ${registro.id}${generarEspacios(registro.id.toString().length+1-espacios_id)}|${registro.descripcion}${generarEspacios(registro.descripcion.toString().length+1-espacios_descripcion)}| ${parseFloat(registro.precio_final).toFixed(2)}${generarEspacios(parseFloat(registro.precio_final).toFixed(2).toString().length+1-espacios_precio)}|\n`
+                    tabla += `| ${registro.id}${generarEspacios(espacios_id - registro.id.toString().length+1)}|${registro.descripcion}${generarEspacios(espacios_descripcion-registro.descripcion.toString().length+1)}| ${parseFloat(registro.precio_final).toFixed(2)}${generarEspacios(espacios_precio-parseFloat(registro.precio_final).toFixed(2).toString().length+1)}|\n`
                 }
                 tabla += `| <b>TOTAL\t\t\t\t ${parseFloat(total).toFixed(2)}</b>`
                 message += `${tabla}\n <b>TOTAL: Q ${parseFloat(total).toFixed(2)}</b>`
