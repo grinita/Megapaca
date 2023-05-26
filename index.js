@@ -2,13 +2,17 @@ const { Telegraf } = require("telegraf");
 const { obtenerToken, guardarUsuarioEnBD, guardarRespuestaEnBD, obtenerDescuentosPorUsuario, getDescuento, insertRegistro, getRegistrosCarrito, deleteRegistroCarrito } = require('./Token');
 
 // Arreglo de colores
-const colores = ['Rojo', 'Verde', 'Gris', 'Negro', 'Azul', 'Celeste', 'Amarillo', 'Naranja', 'Blanco'];
+const colores = ['rojo', 'verde', 'gris', 'negro', 'azul', 'celeste', 'amarillo', 'naranja', 'blanco'];
 
 // Arreglo de descuentos
 const descuentos = [0, 15, 30, 50, 60, 70, 80, 90];
 
 // Índice de la pregunta actual
 let preguntaActual = 0;
+
+function capitalizeFirstLetter(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
 
 // Función para mostrar una pregunta y el menú de opciones
 function mostrarPregunta(ctx, pregunta) {
@@ -109,7 +113,7 @@ async function iniciarBot() {
             } else {
                 await ctx.reply('Estos son tus descuentos:');
                 await descuentos.forEach(async (descuento) => {
-                    await ctx.reply(`- ${descuento.color}: ${descuento.porcentaje}%`);
+                    await ctx.reply(`- ${capitalizeFirstLetter(descuento.color)}: ${descuento.porcentaje}%`);
                 });
 
                 const keyboard = [
@@ -129,11 +133,11 @@ async function iniciarBot() {
 
     bot.action('iniciarCarrito', (ctx) => {
         ctx.reply(`¡Inicia tu carrito!
-        Ingresa /agregar <descripcion de la prenda>, <precio en la etiqueta>, <color de la etiqueta> para agregar algo al carrito. Ejemplo: Encontraste una blusa blanca con etiqueta roja que dice Q15, ingresa: */agregar blusa blanca, 15, rojo*
-        Ingresa /carrito para mostrar lo que llevas en el carrito y el total.
-        Ingresa /sacar <identificador> para sacar algo del carrito. El identificador se puede encontrar ingresando /carrito. Ejemplo: Quieres eliminar el articulo con identificador 653: */sacar 653*
-        Ingresa /reiniciar para empezar de nuevo con el carrito vacío
-        Ingresa /total para tener solamente el total de tu carrito, sin especificacion de los productos`);
+        -Ingresa /agregar <descripcion de la prenda>, <precio en la etiqueta>, <color de la etiqueta> para agregar algo al carrito. Ejemplo: Encontraste una blusa blanca con etiqueta roja que dice Q15, ingresa: */agregar blusa blanca, 15, rojo*
+        -Ingresa /carrito para mostrar lo que llevas en el carrito y el total.
+        -Ingresa /sacar <identificador> para sacar algo del carrito. El identificador se puede encontrar ingresando /carrito. Ejemplo: Quieres eliminar el articulo con identificador 653: */sacar 653*
+        -Ingresa /reiniciar para empezar de nuevo con el carrito vacío
+        -Ingresa /total para tener solamente el total de tu carrito, sin especificacion de los productos`);
     });
 
     bot.action('limpiar', (ctx) => {
@@ -231,7 +235,7 @@ async function iniciarBot() {
             const descuento = await getDescuento(userId, color);
 
             // Calcular el precio final con descuento
-            const precioFinal = parseFloat(precio) - (parseFloat(precio) * descuento) / 100;
+            const precioFinal = parseFloat(precio) - ((parseFloat(precio) * descuento) / 100);
 
             // Insertar el registro en el carrito
             await insertRegistro(userId, descripcion, precio, descuento, precioFinal, color);
@@ -258,9 +262,10 @@ async function iniciarBot() {
                 for (const registro of registros) {
                     message += `IDENTIFICADOR: ${registro.id}\n`;
                     message += `DESCRIPCIÓN: ${registro.descripcion}\n`;
-                    message += `PRECIO CON DESCUENTO: ${registro.precio_final} (${registro.precio_normal} PRECIO EN LA ETIQUETA)\n`;
+                    message += `PRECIO CON DESCUENTO: ${registro.precio_final} (PRECIO EN LA ETIQUETA: ${registro.precio_normal})\n`;
                     message += `DESCUENTO: ${registro.descuento}\n`;
-                    message += `COLOR ETIQUETA: ${registro.color}\n\n`;
+                    message += `COLOR ETIQUETA: ${capitalizeFirstLetter(registro.color)}\n\n`;
+                    message += '--------------------------------------------------------------------';
                 }
             } else {
                 message += 'El carrito está vacío.';
@@ -316,3 +321,7 @@ async function iniciarBot() {
 }
 
 iniciarBot();
+
+
+
+
