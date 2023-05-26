@@ -87,6 +87,15 @@ async function mostrarDescuentos(ctx) {
     }
 }
 
+function generarEspacios(numero) {
+    if (numero <= 0) {
+      return "";
+    }
+    
+    return " ".repeat(numero);
+  }
+  
+
 async function iniciarBot() {
     const token = await obtenerToken();
 
@@ -257,8 +266,12 @@ async function iniciarBot() {
 
             // Construir el mensaje de respuesta
             let message = 'Carrito de compras:\n\n';
-            let tabla = `| IDENTIFICADOR|Descripción\t\t|Precio con descuento |`;
+            let tabla = `| ID | Descripción                  | Precio |`;
 
+            let espacios_id = 4;
+            let espacios_descripcion = 30;
+            let espacios_precio = 8;
+        
             if (registros.length > 0) {
                 var total = parseFloat(0)
                 for (const registro of registros) {
@@ -268,7 +281,7 @@ async function iniciarBot() {
                     message += `PRECIO CON DESCUENTO: <b>Q${parseFloat(registro.precio_final).toFixed(2)}</b>\n`;
                     message += `(Color: ${capitalizeFirstLetter(registro.color)}, precio en la etiqueta: ${registro.precio_normal}, descuento: ${registro.descuento})\n`;
                     message += '__________________________\n';
-                    tabla += `| ${registro.id}\t|${registro.descripcion}| ${parseFloat(registro.precio_final).toFixed(2)}\t|`
+                    tabla += `| ${registro.id}${generarEspacios(registro.id.toString().length+1)}|${registro.descripcion}${generarEspacios(registro.descripcion.toString().length+1)}| ${parseFloat(registro.precio_final).toFixed(2)}${generarEspacios(parseFloat(registro.precio_final).toFixed(2).toString().length+1)}|\n`
                 }
                 tabla += `| <b>TOTAL\t\t\t\t ${parseFloat(total).toFixed(2)}</b>`
                 message += `${tabla}\n <b>TOTAL: Q ${parseFloat(total).toFixed(2)}</b>`
