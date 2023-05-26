@@ -1,5 +1,5 @@
 const { Telegraf } = require("telegraf");
-const { obtenerToken, guardarUsuarioEnBD, guardarRespuestaEnBD } = require('./Token');
+const { obtenerToken, guardarUsuarioEnBD, guardarRespuestaEnBD, obtenerDescuentosPorUsuario } = require('./Token');
 
 // Arreglo de colores
 const colores = ['Rojo', 'Verde', 'Gris', 'Negro', 'Azul', 'Celeste', 'Amarillo', 'Naranja', 'Blanco'];
@@ -20,8 +20,23 @@ function mostrarPregunta(ctx, pregunta) {
     ctx.reply(preguntaText, {
         reply_markup: {
             inline_keyboard: [
-                colores.map((color) => ({ text: color, callback_data: color })),
-            ],
+                [
+                    { text: 'Rojo \u{1F534}', callback_data: 'red' },
+                    { text: 'Verde \u{1F7E2}', callback_data: 'green' },
+                    { text: 'Gris \u{1F518}', callback_data: 'gray' },
+                ],
+                [
+                    { text: 'Negro \u{26AB}', callback_data: 'black' },
+                    { text: 'Azul \u{1F535}', callback_data: 'blue' },
+                    { text: 'Celeste \u{1F48E}', callback_data: 'bblue' },
+                ],
+                [
+
+                    { text: 'Amarillo \u{1F7E1}', callback_data: 'yellow' },
+                    { text: 'Naranja \u{1F7E0}', callback_data: 'orange' },
+                    { text: 'Blanco \u{26AA}', callback_data: 'white' },
+                ]
+            ]
         },
     });
 
@@ -47,6 +62,26 @@ function manejarRespuesta(ctx, respuesta) {
         ctx.reply('Has completado todos los descuentos, empieza a agregar ropa a tu carrito :)');
     }
 }
+
+async function mostrarDescuentos(ctx) {
+    const { id } = ctx.from;
+  
+    try {
+      const descuentos = await obtenerDescuentosPorUsuario(id);
+  
+      if (descuentos.length === 0) {
+        ctx.reply('No se encontraron descuentos para tu usuario.');
+      } else {
+        ctx.reply('Estos son tus descuentos:');
+        descuentos.forEach((descuento) => {
+          ctx.reply(`- ${descuento.color}: ${descuento.porcentaje}%`);
+        });
+      }
+    } catch (error) {
+      console.error('Error al obtener los descuentos:', error);
+      ctx.reply('Ocurrió un error al obtener los descuentos. Por favor, intenta nuevamente más tarde.');
+    }
+  }
 
 (async () => {
     const token = await obtenerToken();
@@ -78,6 +113,7 @@ function manejarRespuesta(ctx, respuesta) {
         ctx.answerCbQuery();
     });
 
+    bot.command('/descuentos', mostrarDescuentos);
 
     bot.command('test', ctx => {
         bot.telegram.sendMessage(ctx.chat.id, 'Agregar descuento de etiqueta',

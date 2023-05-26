@@ -30,8 +30,6 @@ async function obtenerToken() {
 }
 
 async function guardarUsuarioEnBD(usuarioId, firstName, lastName) {
-  const token = await obtenerToken();
-
   // Conexión a la base de datos
   const connection = mysql.createConnection({
     host: "d8f406ed5c65",
@@ -61,8 +59,6 @@ async function guardarUsuarioEnBD(usuarioId, firstName, lastName) {
 }
 
 async function guardarRespuestaEnBD(usuarioId, descuento, color) {
-  const token = await obtenerToken();
-
   // Conexión a la base de datos
   const connection = mysql.createConnection({
     host: "d8f406ed5c65",
@@ -77,16 +73,76 @@ async function guardarRespuestaEnBD(usuarioId, descuento, color) {
       return;
     }
 
-    const query = `INSERT INTO descuento (usuario, porcentaje, color) VALUES (${usuarioId}, ${descuento}, '${color}')`;
+    const selectQuery = `SELECT * FROM descuento WHERE usuario = ${usuarioId} AND porcentaje = ${descuento}`;
 
-    connection.query(query, (error, results) => {
+    connection.query(selectQuery, (error, results) => {
       if (error) {
-        console.error('Error al guardar la respuesta en la base de datos:', error);
-      } else {
-        console.log('Respuesta guardada correctamente en la base de datos');
+        console.error('Error al buscar en la base de datos:', error);
+        connection.end();
+        return;
       }
 
-      connection.end(); // Cerrar la conexión después de ejecutar la consulta
+      if (results.length > 0) {
+        // Si existe un registro con el mismo usuarioId y descuento, se actualiza el atributo color
+        const updateQuery = `UPDATE descuento SET color = '${color}' WHERE usuario = ${usuarioId} AND porcentaje = ${descuento}`;
+
+        connection.query(updateQuery, (error, updateResults) => {
+          if (error) {
+            console.error('Error al actualizar el registro en la base de datos:', error);
+          } else {
+            console.log('Registro actualizado correctamente en la base de datos');
+          }
+
+          connection.end(); // Cerrar la conexión después de ejecutar la consulta
+        });
+      } else {
+        // Si no existe un registro con el mismo usuarioId y descuento, se inserta un nuevo registro
+        const insertQuery = `INSERT INTO descuento (usuario, porcentaje, color) VALUES (${usuarioId}, ${descuento}, '${color}')`;
+
+        connection.query(insertQuery, (error, insertResults) => {
+          if (error) {
+            console.error('Error al insertar el registro en la base de datos:', error);
+          } else {
+            console.log('Registro insertado correctamente en la base de datos');
+          }
+
+          connection.end(); // Cerrar la conexión después de ejecutar la consulta
+        });
+      }
+    });
+  });
+}
+
+
+
+async function obtenerDescuentosPorUsuario(usuarioId) {
+
+  // Conexión a la base de datos
+  const connection = mysql.createConnection({
+    host: "d8f406ed5c65",
+    user: "root",
+    password: "change-me",
+    database: "megapaca"
+  });
+
+  return new Promise((resolve, reject) => {
+    connection.connect((err) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+
+      const query = `SELECT * FROM descuento WHERE usuario = ${usuarioId} ORDER BY porcentaje ASC`;
+
+      connection.query(query, (error, results) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(results);
+        }
+
+        connection.end(); // Cerrar la conexión después de obtener los resultados
+      });
     });
   });
 }
@@ -94,5 +150,6 @@ async function guardarRespuestaEnBD(usuarioId, descuento, color) {
 module.exports = {
   obtenerToken,
   guardarUsuarioEnBD,
-  guardarRespuestaEnBD
+  guardarRespuestaEnBD,
+  obtenerDescuentosPorUsuario
 };
