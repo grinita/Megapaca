@@ -143,9 +143,6 @@ async function obtenerDescuentosPorUsuario(usuarioId) {
 
 
 
-const mysql = require('mysql2');
-
-
 // Función para obtener el descuento
 async function getDescuento(userId, color) {
   return new Promise((resolve, reject) => {
