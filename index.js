@@ -63,7 +63,6 @@ function manejarRespuesta(ctx, respuesta, bot) {
     } else {
         // Se completaron todas las preguntas
         ctx.reply('Has completado todos los descuentos, empieza a agregar ropa a tu carrito :)');
-        bot.handleUpdate({ message: { text: '/iniciarCarrito', chat: ctx.chat , callback_data: "iniciarCarrito"} });
     }
 }
 
@@ -137,7 +136,7 @@ async function iniciarBot() {
         -Ingresa /carrito para mostrar lo que llevas en el carrito y el total.
         -Ingresa /sacar <identificador> para sacar algo del carrito. El identificador se puede encontrar ingresando /carrito. Ejemplo: Quieres eliminar el articulo con identificador 653: */sacar 653*
         -Ingresa /reiniciar para empezar de nuevo con el carrito vacío
-        -Ingresa /total para tener solamente el total de tu carrito, sin especificacion de los productos`);
+        -Ingresa /total para tener solamente el total de tu carrito, sin especificacion de los productos`,{ parse_mode: 'MarkdownV2' });
     });
 
     bot.action('limpiar', (ctx) => {
@@ -265,16 +264,16 @@ async function iniciarBot() {
                     total += parseFloat(registro.precio_final).toFixed(2)
                     message += `\nIDENTIFICADOR: ${registro.id}\n`;
                     message += `DESCRIPCIÓN: ${registro.descripcion}\n`;
-                    message += `PRECIO CON DESCUENTO: <b>Q${parseFloat(registro.precio_final).toFixed(2)}</b>\n`;
+                    message += `PRECIO CON DESCUENTO: *Q${parseFloat(registro.precio_final).toFixed(2)}*\n`;
                     message += `(Color: ${capitalizeFirstLetter(registro.color)}, precio en la etiqueta: ${registro.precio_normal}, descuento: ${registro.descuento})\n`;
                     message += '__________________________\n';
                 }
-                message += `\n <b>TOTAL: Q ${total}</b>`
+                message += `\n *TOTAL: Q ${total}*`
             } else {
                 message += 'El carrito está vacío.';
             }
 
-            ctx.reply(message);
+            ctx.reply(message,{ parse_mode: 'MarkdownV2' });
         } catch (error) {
             console.error('Error al obtener el carrito:', error);
             ctx.reply('Ocurrió un error al obtener el carrito.');
