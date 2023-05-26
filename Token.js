@@ -21,7 +21,7 @@ async function obtenerToken() {
         if (error) {
           reject(error);
         } else {
-          connection.end(); // Cerrar la conexión después de obtener los resultados
+          //connection.end(); // Cerrar la conexión después de obtener los resultados
           resolve(results[0]["token"]);
         }
       });
@@ -63,7 +63,7 @@ async function guardarUsuarioEnBD(usuarioId, firstName, lastName) {
           }
         }
 
-        connection.end(); // Cerrar la conexión después de ejecutar la consulta
+        //connection.end(); // Cerrar la conexión después de ejecutar la consulta
       });
     });
   });
@@ -82,7 +82,7 @@ async function guardarRespuestaEnBD(usuarioId, descuento, color) {
     connection.query(selectQuery, (error, results) => {
       if (error) {
         console.error('Error al buscar en la base de datos:', error);
-        connection.end();
+        //connection.end();
         return;
       }
 
@@ -97,7 +97,7 @@ async function guardarRespuestaEnBD(usuarioId, descuento, color) {
             console.log('Registro actualizado correctamente en la base de datos');
           }
 
-          connection.end(); // Cerrar la conexión después de ejecutar la consulta
+          //connection.end(); // Cerrar la conexión después de ejecutar la consulta
         });
       } else {
         // Si no existe un registro con el mismo usuarioId y descuento, se inserta un nuevo registro
@@ -110,7 +110,7 @@ async function guardarRespuestaEnBD(usuarioId, descuento, color) {
             console.log('Registro insertado correctamente en la base de datos');
           }
 
-          connection.end(); // Cerrar la conexión después de ejecutar la consulta
+          //connection.end(); // Cerrar la conexión después de ejecutar la consulta
         });
       }
     });
@@ -135,7 +135,7 @@ async function obtenerDescuentosPorUsuario(usuarioId) {
         } else {
           resolve(results);
         }
-        connection.end(); // Cerrar la conexión después de obtener los resultados
+        //connection.end(); // Cerrar la conexión después de obtener los resultados
       });
     });
   });
@@ -158,7 +158,7 @@ async function getDescuento(userId, color) {
   } catch (error) {
     throw error;
   } finally {
-    connection.end();
+    //connection.end();
   }
 }
 
@@ -172,7 +172,7 @@ async function insertRegistro(userId, descripcion, precio, descuento, precioFina
   } catch (error) {
     throw error;
   } finally {
-    connection.end();
+    //connection.end();
   }
 }
 
@@ -187,7 +187,7 @@ async function getRegistrosCarrito(userId) {
   } catch (error) {
     throw error;
   } finally {
-    connection.end();
+    //connection.end();
   }
 }
 
@@ -211,7 +211,7 @@ async function deleteRegistroCarrito(id, userId) {
   } catch (error) {
     throw error;
   } finally {
-    connection.end();
+    //connection.end();
   }
 }
 
