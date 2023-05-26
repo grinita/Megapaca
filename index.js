@@ -257,7 +257,7 @@ async function iniciarBot() {
 
             // Construir el mensaje de respuesta
             let message = 'Carrito de compras:\n\n';
-            let tabla = `<table><tr><td>IDENTIFICADOR</td><td>Descripción</td><td>Precio con descuento</td></tr>`;
+            let tabla = `| IDENTIFICADOR|Descripción\t\t|Precio con descuento |`;
 
             if (registros.length > 0) {
                 var total = parseFloat(0)
@@ -268,9 +268,9 @@ async function iniciarBot() {
                     message += `PRECIO CON DESCUENTO: <b>Q${parseFloat(registro.precio_final).toFixed(2)}</b>\n`;
                     message += `(Color: ${capitalizeFirstLetter(registro.color)}, precio en la etiqueta: ${registro.precio_normal}, descuento: ${registro.descuento})\n`;
                     message += '__________________________\n';
-                    tabla += `<tr><td>${registro.id}</td><td>${registro.descripcion}</td><td>${parseFloat(registro.precio_final).toFixed(2)}</td></tr>`
+                    tabla += `| ${registro.id}\t|${registro.descripcion}| ${parseFloat(registro.precio_final).toFixed(2)}\t|`
                 }
-                tabla += `<tr><td><b>TOTAL</b></td><td></td><td><b>${parseFloat(total).toFixed(2)}</b></td></tr>`
+                tabla += `| <b>TOTAL\t\t\t\t ${parseFloat(total).toFixed(2)}</b>`
                 message += `${tabla}\n <b>TOTAL: Q ${parseFloat(total).toFixed(2)}</b>`
             } else {
                 message += 'El carrito está vacío.';
