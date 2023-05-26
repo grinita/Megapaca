@@ -1,8 +1,23 @@
 const { Telegraf } = require("telegraf");
-const { obtenerToken, guardarUsuarioEnBD, guardarRespuestaEnBD, obtenerDescuentosPorUsuario } = require('./Token');
+const {
+    obtenerToken,
+    guardarUsuarioEnBD,
+    guardarRespuestaEnBD,
+    obtenerDescuentosPorUsuario,
+} = require("./Token");
 
 // Arreglo de colores
-const colores = ['Rojo', 'Verde', 'Gris', 'Negro', 'Azul', 'Celeste', 'Amarillo', 'Naranja', 'Blanco'];
+const colores = [
+    "Rojo",
+    "Verde",
+    "Gris",
+    "Negro",
+    "Azul",
+    "Celeste",
+    "Amarillo",
+    "Naranja",
+    "Blanco",
+];
 
 // Arreglo de descuentos
 const descuentos = [0, 15, 30, 40, 50, 60, 70, 80, 90];
@@ -15,28 +30,28 @@ function mostrarPregunta(ctx, pregunta) {
     const { id } = ctx.from;
 
     // Verificar si es una pregunta de descuento o de precio normal
-    const preguntaText = pregunta !== 0 ? `¿Qué etiqueta tiene ${pregunta}% de descuento?` : '¿Qué etiqueta está a precio normal?';
+    const preguntaText =
+        pregunta !== 0 ? `¿Qué etiqueta tiene ${pregunta}% de descuento?` : "¿Qué etiqueta está a precio normal?";
 
     ctx.reply(preguntaText, {
         reply_markup: {
             inline_keyboard: [
                 [
-                    { text: 'Rojo \u{1F534}', callback_data: 'red' },
-                    { text: 'Verde \u{1F7E2}', callback_data: 'green' },
-                    { text: 'Gris \u{1F518}', callback_data: 'gray' },
+                    { text: "Rojo \u{1F534}", callback_data: "red" },
+                    { text: "Verde \u{1F7E2}", callback_data: "green" },
+                    { text: "Gris \u{1F518}", callback_data: "gray" },
                 ],
                 [
-                    { text: 'Negro \u{26AB}', callback_data: 'black' },
-                    { text: 'Azul \u{1F535}', callback_data: 'blue' },
-                    { text: 'Celeste \u{1F48E}', callback_data: 'bblue' },
+                    { text: "Negro \u{26AB}", callback_data: "black" },
+                    { text: "Azul \u{1F535}", callback_data: "blue" },
+                    { text: "Celeste \u{1F48E}", callback_data: "bblue" },
                 ],
                 [
-
-                    { text: 'Amarillo \u{1F7E1}', callback_data: 'yellow' },
-                    { text: 'Naranja \u{1F7E0}', callback_data: 'orange' },
-                    { text: 'Blanco \u{26AA}', callback_data: 'white' },
-                ]
-            ]
+                    { text: "Amarillo \u{1F7E1}", callback_data: "yellow" },
+                    { text: "Naranja \u{1F7E0}", callback_data: "orange" },
+                    { text: "Blanco \u{26AA}", callback_data: "white" },
+                ],
+            ],
         },
     });
 
@@ -59,8 +74,10 @@ function manejarRespuesta(ctx, respuesta) {
         mostrarPregunta(ctx, descuentos[preguntaActual]);
     } else {
         // Se completaron todas las preguntas
-        ctx.reply('Has completado todos los descuentos, empieza a agregar ropa a tu carrito :)');
-        bot.handleUpdate({ message: { text: '/iniciarCarrito', chat: ctx.chat } })
+        ctx.reply(
+            "Has completado todos los descuentos, empieza a agregar ropa a tu carrito :)"
+        );
+        bot.handleUpdate({ message: { text: "/iniciarCarrito", chat: ctx.chat } });
     }
 }
 
@@ -71,30 +88,30 @@ async function mostrarDescuentos(ctx) {
         const descuentos = await obtenerDescuentosPorUsuario(id);
 
         if (descuentos.length === 0) {
-            ctx.reply('No se encontraron descuentos para tu usuario.');
+            ctx.reply("No se encontraron descuentos para tu usuario.");
         } else {
-            ctx.reply('Estos son tus descuentos:');
+            ctx.reply("Estos son tus descuentos:");
             descuentos.forEach((descuento) => {
                 ctx.reply(`- ${descuento.color}: ${descuento.porcentaje}%`);
             });
         }
     } catch (error) {
-        console.error('Error al obtener los descuentos:', error);
-        ctx.reply('Ocurrió un error al obtener los descuentos. Por favor, intenta nuevamente más tarde.');
+        console.error("Error al obtener los descuentos:", error);
+        ctx.reply(
+            "Ocurrió un error al obtener los descuentos. Por favor, intenta nuevamente más tarde."
+        );
     }
 }
-
-
 
 (async () => {
     const token = await obtenerToken();
 
     const bot = new Telegraf(token);
 
-    bot.command(['start', 'empezar', 'inicio', 'iniciar'], async (ctx) => {
+    bot.command(["start", "empezar", "inicio", "iniciar"], async (ctx) => {
         // Obtener datos del usuario
         const { id, first_name, last_name } = ctx.from;
-        const username = first_name + (last_name ? ' ' + last_name : '');
+        const username = first_name + (last_name ? " " + last_name : "");
 
         // Guardar usuario en la base de datos
         guardarUsuarioEnBD(id, first_name, last_name);
@@ -106,71 +123,82 @@ async function mostrarDescuentos(ctx) {
             const descuentos = await obtenerDescuentosPorUsuario(id);
 
             if (descuentos.length === 0) {
-                ctx.reply('No se encontraron descuentos para tu usuario.');
-                bot.handleUpdate({ message: { text: '/limpiar', chat: ctx.chat } })
+                ctx.reply("No se encontraron descuentos para tu usuario.");
+                bot.handleUpdate({ message: { text: "/limpiar", chat: ctx.chat } });
             } else {
-                ctx.reply('Estos son tus descuentos:');
+                ctx.reply("Estos son tus descuentos:");
                 await descuentos.forEach((descuento) => {
                     ctx.reply(`- ${descuento.color}: ${descuento.porcentaje}%`);
                 });
 
                 const keyboard = [
-                    [{ text: 'Sí, quiero empezar la lista de nuevo', callback_data: 'limpiar' }],
-                    [{ text: 'No, los descuentos de la lista son correctos', callback_data: 'iniciarCarrito' }]
+                    [
+                        { text: "Sí, quiero empezar la lista de nuevo", callback_data: "limpiar" },
+                    ],
+                    [
+                        {
+                            text: "No, los descuentos de la lista son correctos",
+                            callback_data: "iniciarCarrito",
+                        },
+                    ],
                 ];
 
-                await ctx.reply('¿Desea limpiar la lista de descuentos?', { reply_markup: { inline_keyboard: keyboard } });
+                await ctx.reply("¿Desea limpiar la lista de descuentos?", {
+                    reply_markup: { inline_keyboard: keyboard },
+                });
             }
-
         } catch (error) {
-            console.error('Error al obtener los descuentos:', error);
-            ctx.reply('Ocurrió un error al obtener los descuentos. Por favor, intenta nuevamente más tarde.');
+            console.error("Error al obtener los descuentos:", error);
+            ctx.reply(
+                "Ocurrió un error al obtener los descuentos. Por favor, intenta nuevamente más tarde."
+            );
         }
-
     });
 
-    bot.command('iniciarCarrito', (ctx) => {
+    bot.command("iniciarCarrito", (ctx) => {
         ctx.reply(`¡Inicia tu carrito!
         Ingresa /agregar para agregar algo al carrito.
         Ingresa /carrito para mostrar lo que llevas en el carrito y el total.
         Ingresa /sacar para sacar algo del carrito.
         Ingresa /reiniciar para empezar de nuevo con el carrito vacío`);
-    })
-
-    bot.action('limpiar', (ctx) => {
-        ctx.answerCbQuery();
-        ctx.reply('Limpieza realizada. Lista de descuentos eliminada.');
-
-        preguntaActual = 0;
-        mostrarPregunta(ctx, descuentos[preguntaActual]);
     });
 
-
-    bot.action('descuentos', (ctx) => {
-        ctx.answerCbQuery();
-        ctx.reply('Accediendo a la lista de descuentos existente.');
-        // Llama al comando /descuentos
-        bot.handleUpdate({ message: { text: '/descuentos', chat: ctx.chat } });
-      bot.handleUpdate({ message: { text: '/limpiar', chat: ctx.chat } });
-    });
-
-    
-    bot.command('limpiar', (ctx) => {
+    bot.command("limpiar", (ctx) => {
         // Iniciar las preguntas y desplegar el menú
         preguntaActual = 0;
         mostrarPregunta(ctx, descuentos[preguntaActual]);
-    })
-
-    bot.action(colores, (ctx) => {
-        const respuesta = ctx.callbackQuery.data;
-
-        // Manejar la respuesta del usuario
-        manejarRespuesta(ctx, respuesta);
-
-        ctx.answerCbQuery();
     });
 
-    bot.command('descuentos', mostrarDescuentos);
+    bot.action("limpiar", (ctx) => {
+        ctx.answerCbQuery();
+        ctx.reply("Limpieza realizada. Lista de descuentos eliminada.");
+
+        preguntaActual = 0;
+        mostrarPregunta(ctx, descuentos[preguntaActual]);
+    });
+
+    bot.action("descuentos", (ctx) => {
+        ctx.answerCbQuery();
+        ctx.reply("Accediendo a la lista de descuentos existente.");
+        // Llama al comando /descuentos
+        bot.handleUpdate({ message: { text: "/descuentos", chat: ctx.chat } });
+    });
+
+    bot.action("iniciarCarrito", (ctx) => {
+        ctx.answerCbQuery();
+        ctx.reply("Accediendo al carrito existente.");
+        // Llama al comando /carrito
+        bot.handleUpdate({ message: { text: "/carrito", chat: ctx.chat } });
+    });
+
+    bot.action(colores, (ctx) => {
+        ctx.answerCbQuery();
+
+        const respuesta = ctx.callbackQuery.data;
+        manejarRespuesta(ctx, respuesta);
+    });
+
+    bot.command("descuentos", mostrarDescuentos);
 
 
     bot.command('xx', ctx => {
