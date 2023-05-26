@@ -21,19 +21,19 @@ function mostrarPregunta(ctx, pregunta) {
         reply_markup: {
             inline_keyboard: [
                 [
-                    { text: 'Rojo \u{1F534}', callback_data: 'red' },
-                    { text: 'Verde \u{1F7E2}', callback_data: 'green' },
-                    { text: 'Gris \u{1F518}', callback_data: 'gray' },
+                    { text: 'Rojo \u{1F534}', callback_data: 'Rojo' },
+                    { text: 'Verde \u{1F7E2}', callback_data: 'Verde' },
+                    { text: 'Gris \u{1F518}', callback_data: 'Gris' },
                 ],
                 [
-                    { text: 'Negro \u{26AB}', callback_data: 'black' },
-                    { text: 'Azul \u{1F535}', callback_data: 'blue' },
-                    { text: 'Celeste \u{1F48E}', callback_data: 'bblue' },
+                    { text: 'Negro \u{26AB}', callback_data: 'Negro' },
+                    { text: 'Azul \u{1F535}', callback_data: 'Azul' },
+                    { text: 'Celeste \u{1F48E}', callback_data: 'Celeste' },
                 ],
                 [
-                    { text: 'Amarillo \u{1F7E1}', callback_data: 'yellow' },
-                    { text: 'Naranja \u{1F7E0}', callback_data: 'orange' },
-                    { text: 'Blanco \u{26AA}', callback_data: 'white' },
+                    { text: 'Amarillo \u{1F7E1}', callback_data: 'Amarillo' },
+                    { text: 'Naranja \u{1F7E0}', callback_data: 'Naranja' },
+                    { text: 'Blanco \u{26AA}', callback_data: 'Blanco' },
                 ]
             ]
         },
@@ -107,30 +107,35 @@ async function limpiarCarrito(ctx) {
 }
 
 // Crear una nueva instancia de Telegraf
-const bot = new Telegraf(await obtenerToken());
+const iniciarBot = async () => {
+    const token = await obtenerToken();
+    const bot = new Telegraf(token);
 
-// Comando para iniciar el juego de descuentos
-bot.command('iniciar', (ctx) => {
-    const { id, first_name, username } = ctx.from;
+    // Comando para iniciar el juego de descuentos
+    bot.command('iniciar', (ctx) => {
+        const { id, first_name, username } = ctx.from;
 
-    guardarUsuarioEnBD(id, first_name, username);
+        guardarUsuarioEnBD(id, first_name, username);
 
-    preguntaActual = 0;
+        preguntaActual = 0;
 
-    // Mostrar la primera pregunta
-    mostrarPregunta(ctx, descuentos[preguntaActual]);
-});
+        // Mostrar la primera pregunta
+        mostrarPregunta(ctx, descuentos[preguntaActual]);
+    });
 
-// Comando para mostrar los descuentos disponibles
-bot.command('descuentos', mostrarDescuentos);
+    // Comando para mostrar los descuentos disponibles
+    bot.command('descuentos', mostrarDescuentos);
 
-// Comando para limpiar el carrito
-bot.command('limpiar', limpiarCarrito);
+    // Comando para limpiar el carrito
+    bot.command('limpiar', limpiarCarrito);
 
-// Manejar la respuesta del usuario
-bot.action(/.*/, (ctx) => {
-    manejarRespuesta(ctx, ctx.match[0]);
-});
+    // Manejar la respuesta del usuario
+    bot.action(/.*/, (ctx) => {
+        manejarRespuesta(ctx, ctx.match[0]);
+    });
 
-// Iniciar el bot
-bot.launch();
+    // Iniciar el bot
+    bot.launch();
+};
+
+iniciarBot().catch(error => console.error('Error al iniciar el bot:', error));
