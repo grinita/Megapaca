@@ -83,33 +83,7 @@ async function mostrarDescuentos(ctx) {
     }
 }
 
-async function limpiaroMantener(ctx) {
-    const { id } = ctx.from;
 
-    try {
-        const descuentos = await obtenerDescuentosPorUsuario(id);
-
-        if (descuentos.length === 0) {
-            ctx.reply('No se encontraron descuentos para tu usuario.');
-            bot.handleUpdate({ message: { text: '/limpiar', chat: ctx.chat } })
-        } else {
-            ctx.reply('Estos son tus descuentos:');
-            descuentos.forEach((descuento) => {
-                ctx.reply(`- ${descuento.color}: ${descuento.porcentaje}%`);
-            });
-            const keyboard = [
-                [{ text: 'Sí, quiero empezar la lista de nuevo', callback_data: 'limpiar' }],
-                [{ text: 'No, los descuentos de la lista son correctos', callback_data: 'iniciarCarrito' }]
-            ];
-    
-            await ctx.reply('¿Desea limpiar la lista de descuentos?', { reply_markup: { inline_keyboard: keyboard } });
-        }
-
-    } catch (error) {
-        console.error('Error al obtener los descuentos:', error);
-        ctx.reply('Ocurrió un error al obtener los descuentos. Por favor, intenta nuevamente más tarde.');
-    }
-}
 
 (async () => {
     const token = await obtenerToken();
@@ -127,7 +101,29 @@ async function limpiaroMantener(ctx) {
         // Enviar mensaje de bienvenida
         ctx.reply(`¡Hola ${username}! Bienvenido(a) al bot.`);
 
-        await limpiaroMantener(ctx)
+        try {
+            const descuentos = await obtenerDescuentosPorUsuario(id);
+
+            if (descuentos.length === 0) {
+                ctx.reply('No se encontraron descuentos para tu usuario.');
+                bot.handleUpdate({ message: { text: '/limpiar', chat: ctx.chat } })
+            } else {
+                ctx.reply('Estos son tus descuentos:');
+                descuentos.forEach((descuento) => {
+                    ctx.reply(`- ${descuento.color}: ${descuento.porcentaje}%`);
+                });
+                const keyboard = [
+                    [{ text: 'Sí, quiero empezar la lista de nuevo', callback_data: 'limpiar' }],
+                    [{ text: 'No, los descuentos de la lista son correctos', callback_data: 'iniciarCarrito' }]
+                ];
+
+                await ctx.reply('¿Desea limpiar la lista de descuentos?', { reply_markup: { inline_keyboard: keyboard } });
+            }
+
+        } catch (error) {
+            console.error('Error al obtener los descuentos:', error);
+            ctx.reply('Ocurrió un error al obtener los descuentos. Por favor, intenta nuevamente más tarde.');
+        }
 
     });
 
