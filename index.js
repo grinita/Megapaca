@@ -108,8 +108,8 @@ async function iniciarBot() {
                 bot.handleUpdate({ message: { text: '/limpiar', chat: ctx.chat } });
             } else {
                 ctx.reply('Estos son tus descuentos:');
-                await descuentos.forEach((descuento) => {
-                    ctx.reply(`- ${descuento.color}: ${descuento.porcentaje}%`);
+                await descuentos.forEach(async (descuento) => {
+                    await ctx.reply(`- ${descuento.color}: ${descuento.porcentaje}%`);
                 });
 
                 const keyboard = [
