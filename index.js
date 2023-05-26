@@ -281,7 +281,7 @@ async function iniciarBot() {
                     message += `PRECIO CON DESCUENTO: <b>Q${parseFloat(registro.precio_final).toFixed(2)}</b>\n`;
                     message += `(Color: ${capitalizeFirstLetter(registro.color)}, precio en la etiqueta: ${registro.precio_normal}, descuento: ${registro.descuento})\n`;
                     message += '__________________________\n';
-                    tabla += `| ${registro.id}${registro.id.toString().padEnd(espacios_id - 1)}| ${registro.descripcion}${registro.descripcion.toString().padEnd(espacios_descripcion-1)}| ${parseFloat(registro.precio_final).toFixed(2)}${parseFloat(registro.precio_final).toFixed(2).toString().padEnd(espacios_precio-1)}|\n`
+                    tabla += `| ${registro.id}${registro.id.toString().padEnd(espacios_id - 1," ")}| ${registro.descripcion}${registro.descripcion.toString().padEnd(espacios_descripcion-1," ")}| ${parseFloat(registro.precio_final).toFixed(2)}${parseFloat(registro.precio_final).toFixed(2).toString().padEnd(espacios_precio-1," ")}|\n`
                 }
                 tabla += `| <b>TOTAL\t\t\t\t ${parseFloat(total).toFixed(2)}</b>`
                 message += `${tabla}\n <b>TOTAL: Q ${parseFloat(total).toFixed(2)}</b>`
