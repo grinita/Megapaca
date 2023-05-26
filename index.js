@@ -7,6 +7,7 @@ const { obtenerToken } = require('./Token');
 async function obtenerTokenValor() {
     try {
         const token = await obtenerToken();
+        console.log("FUNCION: Se obtuvo el token: " + token)
         return token;
     } catch (error) {
         console.error("Error al obtener el token:", error);
