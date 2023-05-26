@@ -113,7 +113,7 @@ async function mostrarDescuentos(ctx) {
                 await descuentos.forEach((descuento) => {
                     ctx.reply(`- ${descuento.color}: ${descuento.porcentaje}%`);
                 });
-                
+
                 const keyboard = [
                     [{ text: 'Sí, quiero empezar la lista de nuevo', callback_data: 'limpiar' }],
                     [{ text: 'No, los descuentos de la lista son correctos', callback_data: 'iniciarCarrito' }]
@@ -140,9 +140,11 @@ async function mostrarDescuentos(ctx) {
     bot.action('limpiar', (ctx) => {
         ctx.answerCbQuery();
         ctx.reply('Limpieza realizada. Lista de descuentos eliminada.');
-        // Llama al comando /limpiar
-        bot.handleUpdate({ message: { text: '/limpiar', chat: ctx.chat } });
+
+        preguntaActual = 0;
+        mostrarPregunta(ctx, descuentos[preguntaActual]);
     });
+
 
     bot.action('descuentos', (ctx) => {
         ctx.answerCbQuery();
@@ -151,11 +153,12 @@ async function mostrarDescuentos(ctx) {
         bot.handleUpdate({ message: { text: '/descuentos', chat: ctx.chat } });
     });
 
+    /*
     bot.command('limpiar', (ctx) => {
         // Iniciar las preguntas y desplegar el menú
         preguntaActual = 0;
         mostrarPregunta(ctx, descuentos[preguntaActual]);
-    })
+    })*/
 
     bot.action(colores, (ctx) => {
         const respuesta = ctx.callbackQuery.data;
