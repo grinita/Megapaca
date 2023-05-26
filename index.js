@@ -5,7 +5,7 @@ const { obtenerToken, guardarUsuarioEnBD, guardarRespuestaEnBD, obtenerDescuento
 const colores = ['Rojo', 'Verde', 'Gris', 'Negro', 'Azul', 'Celeste', 'Amarillo', 'Naranja', 'Blanco'];
 
 // Arreglo de descuentos
-const descuentos = [0, 15, 30, 40, 50, 60, 70, 80, 90];
+const descuentos = [0, 15, 30, 50, 60, 70, 80, 90];
 
 // Índice de la pregunta actual
 let preguntaActual = 0;
@@ -59,7 +59,7 @@ function manejarRespuesta(ctx, respuesta, bot) {
     } else {
         // Se completaron todas las preguntas
         ctx.reply('Has completado todos los descuentos, empieza a agregar ropa a tu carrito :)');
-        bot.handleUpdate({ message: { text: '/iniciarCarrito', chat: ctx.chat } });
+        bot.handleUpdate({ message: { text: 'iniciarCarrito', chat: ctx.chat } });
     }
 }
 
@@ -71,7 +71,7 @@ async function mostrarDescuentos(ctx) {
 
         if (descuentos.length === 0) {
             ctx.reply('No se encontraron descuentos para tu usuario.');
-            bot.handleUpdate({ message: { text: '/limpiar', chat: ctx.chat } });
+            //bot.handleUpdate({ message: { text: '/limpiar', chat: ctx.chat } });
         } else {
             ctx.reply('Estos son tus descuentos:');
             descuentos.forEach((descuento) => {
@@ -107,7 +107,7 @@ async function iniciarBot() {
                 ctx.reply('No se encontraron descuentos para tu usuario.');
                 bot.handleUpdate({ message: { text: '/limpiar', chat: ctx.chat } });
             } else {
-                ctx.reply('Estos son tus descuentos:');
+                await ctx.reply('Estos son tus descuentos:');
                 await descuentos.forEach(async (descuento) => {
                     await ctx.reply(`- ${descuento.color}: ${descuento.porcentaje}%`);
                 });
@@ -127,7 +127,7 @@ async function iniciarBot() {
 
     });
 
-    bot.command('iniciarCarrito', (ctx) => {
+    bot.action('iniciarCarrito', (ctx) => {
         ctx.reply(`¡Inicia tu carrito!
         Ingresa /agregar para agregar algo al carrito.
         Ingresa /carrito para mostrar lo que llevas en el carrito y el total.
