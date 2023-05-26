@@ -145,7 +145,7 @@ async function iniciarBot() {
         -Ingresa /carrito para mostrar lo que llevas en el carrito y el total.
         -Ingresa /sacar <identificador> para sacar algo del carrito. El identificador se puede encontrar ingresando /carrito. Ejemplo: Quieres eliminar el articulo con identificador 653: <b>/sacar 653</b>
         -Ingresa /reiniciar para empezar de nuevo con el carrito vacío
-        -Ingresa /total para tener solamente el total de tu carrito, sin especificacion de los productos`,{ parse_mode: 'MarkdownV2' });
+        -Ingresa /total para tener solamente el total de tu carrito, sin especificacion de los productos`);
     });
 
     bot.command('iniciarCarrito', (ctx) => {
@@ -154,7 +154,7 @@ async function iniciarBot() {
         -Ingresa /carrito para mostrar lo que llevas en el carrito y el total.
         -Ingresa /sacar <identificador> para sacar algo del carrito. El identificador se puede encontrar ingresando /carrito. Ejemplo: Quieres eliminar el articulo con identificador 653: <b>/sacar 653</b>
         -Ingresa /reiniciar para empezar de nuevo con el carrito vacío
-        -Ingresa /total para tener solamente el total de tu carrito, sin especificacion de los productos`,{ parse_mode: 'MarkdownV2' });
+        -Ingresa /total para tener solamente el total de tu carrito, sin especificacion de los productos`);
     });
 
     bot.action('limpiar', (ctx) => {
