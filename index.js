@@ -113,7 +113,7 @@ async function iniciarBot() {
             } else {
                 await ctx.reply('Estos son tus descuentos:');
                 await descuentos.forEach(async (descuento) => {
-                    await ctx.reply(`- ${capitalizeFirstLetter(descuento.color)}: ${descuento.porcentaje}%`);
+                    await ctx.reply(`- ${await capitalizeFirstLetter(descuento.color)}: ${descuento.porcentaje}%`);
                 });
 
                 const keyboard = [
@@ -261,12 +261,11 @@ async function iniciarBot() {
 
             if (registros.length > 0) {
                 for (const registro of registros) {
-                    message += `IDENTIFICADOR: ${registro.id}\n`;
+                    message += `\nIDENTIFICADOR: ${registro.id}\n`;
                     message += `DESCRIPCIÓN: ${registro.descripcion}\n`;
-                    message += `PRECIO CON DESCUENTO: ${registro.precio_final} (PRECIO EN LA ETIQUETA: ${registro.precio_normal})\n`;
-                    message += `DESCUENTO: ${registro.descuento}\n`;
-                    message += `COLOR ETIQUETA: ${capitalizeFirstLetter(registro.color)}\n\n`;
-                    message += '--------------------------------------------------------------------';
+                    message += `PRECIO CON DESCUENTO: *Q${parseFloat(registro.precio_final).toFixed(2)}*\n`;
+                    message += `(Color: ${capitalizeFirstLetter(registro.color)}, precio en la etiqueta: ${registro.precio_normal}, descuento: ${registro.descuento})\n`;
+                    message += '--------------------------------------------------------------------\n';
                 }
             } else {
                 message += 'El carrito está vacío.';
