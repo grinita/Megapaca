@@ -60,6 +60,7 @@ function manejarRespuesta(ctx, respuesta) {
     } else {
         // Se completaron todas las preguntas
         ctx.reply('Has completado todos los descuentos, empieza a agregar ropa a tu carrito :)');
+        bot.handleUpdate({ message: { text: '/iniciarCarrito', chat: ctx.chat } })
     }
 }
 
@@ -149,11 +150,10 @@ async function mostrarDescuentos(ctx) {
         bot.handleUpdate({ message: { text: '/descuentos', chat: ctx.chat } });
     });
 
-    bot.command('limpiar', async (ctx) => {
+    bot.command('limpiar', (ctx) => {
         // Iniciar las preguntas y desplegar el menú
         preguntaActual = 0;
-        await mostrarPregunta(ctx, descuentos[preguntaActual]);
-        bot.handleUpdate({ message: { text: '/iniciarCarrito', chat: ctx.chat } })
+        mostrarPregunta(ctx, descuentos[preguntaActual]);
     })
 
     bot.action(colores, (ctx) => {
